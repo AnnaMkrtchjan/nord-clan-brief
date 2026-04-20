@@ -552,7 +552,6 @@
   <!-- STEP 1 -->
   <div id="step1">
     <div class="step-title">Давайте познакомимся</div>
-    <div class="step-sub">Заполните несколько полей — и мы покажем вам подходящие вопросы</div>
 
     <div class="intro-card">
       <div class="intro-field">
@@ -962,16 +961,9 @@ function closeAllDropdowns() {
 document.addEventListener('click', closeAllDropdowns);
 
 function buildUI() {
-  const bar = document.getElementById('nicheBar');
   const panels = document.getElementById('nichePanels');
 
   NICHES.forEach(niche => {
-    const btn = document.createElement('button');
-    btn.className = 'niche-btn' + (niche.id === currentNiche ? ' active' : '');
-    btn.textContent = niche.label;
-    btn.onclick = () => switchNiche(niche.id);
-    bar.appendChild(btn);
-
     const panel = document.createElement('div');
     panel.className = 'niche-panel' + (niche.id === currentNiche ? ' active' : '');
     panel.id = 'panel-' + niche.id;
