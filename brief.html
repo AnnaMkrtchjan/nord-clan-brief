@@ -412,6 +412,129 @@
     overflow: visible; border-right: none; border-bottom: 1px solid var(--border); }
     .col-headers { display: none; }
   }
+
+  /* Step layout */
+  .step-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text);
+    margin-top: 48px;
+    margin-bottom: 8px;
+  }
+  .step-sub {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-bottom: 32px;
+  }
+
+  .intro-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    max-width: 680px;
+  }
+
+  .intro-field { display: flex; flex-direction: column; gap: 10px; }
+  .intro-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .intro-input {
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'Onest', sans-serif;
+    font-size: 15px;
+    padding: 12px 16px;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .intro-input::placeholder { color: var(--text-dim); }
+  .intro-input:focus {
+    border-color: var(--border-active);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+
+  /* Niche grid */
+  .niche-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .niche-card {
+    padding: 9px 16px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: 'Onest', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    background: var(--input-bg);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .niche-card:hover { border-color: var(--border-active); color: var(--text); background: var(--accent-glow); }
+  .niche-card.selected {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-glow);
+    font-weight: 600;
+  }
+
+  .btn-next {
+    align-self: flex-start;
+    padding: 13px 32px;
+    font-size: 15px;
+  }
+  .btn-next:disabled {
+    opacity: 0.35;
+    cursor: default;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+
+  /* Step 2 header */
+  .step2-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-top: 32px;
+    margin-bottom: 28px;
+  }
+  .btn-back {
+    padding: 8px 14px;
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    font-family: 'Onest', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+    margin-top: 4px;
+  }
+  .btn-back:hover { border-color: var(--border-active); color: var(--text); }
+
+  .step2-company {
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.04em;
+  }
+
+  .form-title { margin-bottom: 24px; }
+
 </style>
 </head>
 <body>
@@ -424,16 +547,51 @@
   <div class="header-title">Бриф на разработку мобильного приложения</div>
 </div>
 
-<div class="niche-bar" id="nicheBar"></div>
-
 <div class="form-wrap">
-  <div id="nichePanels"></div>
-  <div class="actions">
-    <button class="btn-primary" id="sendBtn" onclick="sendToTelegram()">📨 Отправить бриф</button>
-    <button class="btn-secondary" onclick="copyResult()">Скопировать</button>
-    <button class="btn-secondary" onclick="resetForm()">Сбросить</button>
+
+  <!-- STEP 1 -->
+  <div id="step1">
+    <div class="step-title">Давайте познакомимся</div>
+    <div class="step-sub">Заполните несколько полей — и мы покажем вам подходящие вопросы</div>
+
+    <div class="intro-card">
+      <div class="intro-field">
+        <label class="intro-label">Название компании</label>
+        <input type="text" id="companyName" class="intro-input" placeholder="Например: ООО Ромашка">
+      </div>
+      <div class="intro-field">
+        <label class="intro-label">Отрасль / ниша</label>
+        <div class="niche-grid" id="nicheGrid"></div>
+      </div>
+      <div class="intro-field">
+        <label class="intro-label">Бюджет (ориентир)</label>
+        <input type="text" id="budgetInput" class="intro-input" placeholder="Например: до 3 млн руб., или пока не определён">
+      </div>
+      <button class="btn-primary btn-next" id="btnNext" onclick="goToStep2()" disabled>
+        Перейти к вопросам →
+      </button>
+    </div>
   </div>
-  <div class="copy-result" id="copyResult"></div>
+
+  <!-- STEP 2 -->
+  <div id="step2" style="display:none">
+    <div class="step2-header">
+      <button class="btn-back" onclick="goToStep1()">← Назад</button>
+      <div>
+        <div class="step2-company" id="step2Company"></div>
+        <div class="form-title" id="step2Title"></div>
+      </div>
+    </div>
+
+    <div id="nichePanels"></div>
+    <div class="actions">
+      <button class="btn-primary" id="sendBtn" onclick="sendToTelegram()">📨 Отправить бриф</button>
+      <button class="btn-secondary" onclick="copyResult()">Скопировать</button>
+      <button class="btn-secondary" onclick="resetForm()">Сбросить</button>
+    </div>
+    <div class="copy-result" id="copyResult"></div>
+  </div>
+
 </div>
 
 <div class="toast" id="toast"></div>
@@ -928,7 +1086,12 @@ function collectText() {
 
 function copyResult() {
   const niche = NICHES.find(n => n.id === currentNiche);
-  let lines = [niche.title, ''];
+  const company = document.getElementById('companyName').value.trim();
+  const budget = document.getElementById('budgetInput').value.trim();
+  let lines = [niche.title];
+  if (company) lines.push('Компания: ' + company);
+  if (budget) lines.push('Бюджет: ' + budget);
+  lines.push('');
   niche.sections.forEach(section => {
     lines.push(section.num + '. ' + section.title);
     section.fields.forEach((field, fi) => {
@@ -995,7 +1158,111 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 2500);
 }
 
+
+// ---- Step logic ----
+let selectedNicheId = null;
+
+function buildStep1() {
+  const grid = document.getElementById('nicheGrid');
+  NICHES.forEach(niche => {
+    const card = document.createElement('button');
+    card.type = 'button';
+    card.className = 'niche-card';
+    card.textContent = niche.label;
+    card.onclick = () => {
+      document.querySelectorAll('.niche-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      selectedNicheId = niche.id;
+      document.getElementById('btnNext').disabled = false;
+    };
+    grid.appendChild(card);
+  });
+
+  // enable next on company name input too (optional — niche required)
+  document.getElementById('companyName').addEventListener('input', () => {
+    document.getElementById('btnNext').disabled = !selectedNicheId;
+  });
+}
+
+function goToStep2() {
+  if (!selectedNicheId) return;
+  currentNiche = selectedNicheId;
+  const niche = NICHES.find(n => n.id === currentNiche);
+  const company = document.getElementById('companyName').value.trim();
+
+  document.getElementById('step2Company').textContent = company ? company.toUpperCase() : '';
+  document.getElementById('step2Title').textContent = niche.title;
+
+  // Show only the active niche panel
+  document.querySelectorAll('.niche-panel').forEach(p => {
+    p.style.display = p.id === 'panel-' + currentNiche ? 'block' : 'none';
+  });
+
+  document.getElementById('step1').style.display = 'none';
+  document.getElementById('step2').style.display = 'block';
+  window.scrollTo(0, 0);
+}
+
+function goToStep1() {
+  document.getElementById('step1').style.display = 'block';
+  document.getElementById('step2').style.display = 'none';
+  window.scrollTo(0, 0);
+}
+
+function resetForm() {
+  // Reset step 2 fields for current niche
+  const niche = NICHES.find(n => n.id === currentNiche);
+  if (niche) {
+    niche.sections.forEach(section => {
+      section.fields.forEach((field, fi) => {
+        const fid = msId(niche.id, section.num, fi);
+        if (field.multi) {
+          msState[fid] = new Set();
+          const trigger = document.getElementById(fid + '-trigger');
+          if (trigger) { trigger.textContent = '— выбрать —'; trigger.classList.remove('has-value'); }
+          const dd = document.getElementById(fid + '-dropdown');
+          if (dd) dd.querySelectorAll('.ms-option').forEach(o => o.classList.remove('selected'));
+        } else {
+          const sel = document.getElementById(fid);
+          if (sel) sel.value = '';
+        }
+        const comment = document.getElementById(fid + '-comment');
+        if (comment) comment.value = '';
+      });
+    });
+  }
+  document.getElementById('copyResult').style.display = 'none';
+}
+
+function collectText() {
+  const niche = NICHES.find(n => n.id === currentNiche);
+  const company = document.getElementById('companyName').value.trim();
+  const budget = document.getElementById('budgetInput').value.trim();
+
+  let lines = [];
+  lines.push('📋 *Новый бриф — ' + niche.label + '*');
+  if (company) lines.push('🏢 *Компания:* ' + company);
+  if (budget) lines.push('💰 *Бюджет:* ' + budget);
+  lines.push('');
+  lines.push('*' + niche.title + '*');
+  lines.push('');
+
+  niche.sections.forEach(section => {
+    lines.push('*' + section.num + '. ' + section.title + '*');
+    section.fields.forEach((field, fi) => {
+      const val = getFieldValue(niche, section, fi);
+      const comment = document.getElementById(msId(niche.id, section.num, fi) + '-comment');
+      const com = comment && comment.value ? ' (' + comment.value + ')' : '';
+      lines.push('• ' + field.label + ': ' + val + com);
+    });
+    lines.push('');
+  });
+  return lines.join('\n');
+}
+
 buildUI();
+buildStep1();
+
 </script>
 </body>
 </html>
