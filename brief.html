@@ -251,6 +251,7 @@
     gap: 12px;
     margin-top: 28px;
     padding-bottom: 20px;
+    flex-wrap: wrap;
   }
   .btn-primary {
     padding: 12px 28px;
@@ -343,7 +344,8 @@
 <div class="form-wrap">
   <div id="nichePanels"></div>
   <div class="actions">
-    <button class="btn-primary" onclick="copyResult()">Скопировать заполненный бриф</button>
+    <button class="btn-primary" onclick="sendToTelegram()">📨 Отправить бриф</button>
+    <button class="btn-secondary" onclick="copyResult()">Скопировать</button>
     <button class="btn-secondary" onclick="resetForm()">Сбросить</button>
   </div>
   <div class="copy-result" id="copyResult"></div>
@@ -970,10 +972,74 @@ function resetForm() {
   document.getElementById('copyResult').style.display = 'none';
 }
 
-function showToast() {
+function showToast(msg) {
   const t = document.getElementById('toast');
+  t.textContent = msg || 'Скопировано ✓';
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ---- Telegram config ----
+const TG_TOKEN = '8688679133:AAHkPwDz8ml9lSnIlhYDY3h-qUm7VolnKTc';
+const TG_CHAT_ID = '219923148';
+
+function collectText() {
+  const niche = NICHES.find(n => n.id === currentNiche);
+  let lines = [];
+  lines.push('📋 *Новый бриф — ' + niche.label + '*');
+  lines.push('');
+  lines.push('*' + niche.title + '*');
+  lines.push('');
+
+  niche.sections.forEach(section => {
+    lines.push('*' + section.num + '. ' + section.title + '*');
+    section.fields.forEach((field, fi) => {
+      const sel = document.getElementById(`${niche.id}-${section.num}-${fi}`);
+      const comment = document.getElementById(`${niche.id}-${section.num}-${fi}-comment`);
+      const val = sel && sel.value ? sel.value : '—';
+      const com = comment && comment.value ? ' (' + comment.value + ')' : '';
+      lines.push('• ' + field.label + ': ' + val + com);
+    });
+    lines.push('');
+  });
+
+  return lines.join('\n');
+}
+
+async function sendToTelegram() {
+  if (TG_TOKEN === 'ВСТАВЬ_ТОКЕН_СЮДА') {
+    alert('Сначала вставь токен бота в файл (строка TG_TOKEN)');
+    return;
+  }
+
+  const text = collectText();
+  const btn = document.querySelector('.btn-primary');
+  btn.textContent = '⏳ Отправляем...';
+  btn.disabled = true;
+
+  try {
+    const res = await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: TG_CHAT_ID,
+        text: text,
+        parse_mode: 'Markdown'
+      })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      btn.textContent = '✅ Отправлено!';
+      showToast('Бриф отправлен в Telegram ✓');
+      setTimeout(() => { btn.textContent = '📨 Отправить бриф'; btn.disabled = false; }, 3000);
+    } else {
+      throw new Error(data.description);
+    }
+  } catch (e) {
+    btn.textContent = '❌ Ошибка';
+    btn.disabled = false;
+    alert('Не удалось отправить: ' + e.message);
+  }
 }
 
 buildUI();
