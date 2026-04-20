@@ -125,7 +125,6 @@
   .section {
     margin-bottom: 8px;
     border-radius: var(--radius);
-    overflow: hidden;
     border: 1px solid var(--border);
     animation: fadeIn 0.22s ease;
   }
@@ -198,11 +197,14 @@
   .field-input {
     padding: 10px 12px;
     border-right: 1px solid var(--border);
+    overflow: visible;
+    position: relative;
   }
 
   /* Multiselect */
   .multiselect {
     position: relative;
+    width: 100%;
   }
   .ms-trigger {
     width: 100%;
@@ -403,9 +405,11 @@
     .header { padding: 0 16px; }
     .niche-bar { padding: 0 8px; }
     .form-wrap { padding: 0 12px; margin-top: 20px; }
-    .field { grid-template-columns: 1fr; }
+    .field {
+    overflow: visible; grid-template-columns: 1fr; }
     .field-label { border-right: none; border-bottom: 1px solid var(--border); }
-    .field-input { border-right: none; border-bottom: 1px solid var(--border); }
+    .field-input {
+    overflow: visible; border-right: none; border-bottom: 1px solid var(--border); }
     .col-headers { display: none; }
   }
 </style>
