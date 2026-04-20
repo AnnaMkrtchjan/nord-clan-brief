@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Бриф — Nord Clan</title>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #171b24;
+    --surface2: #1e2330;
+    --border: #2a3044;
+    --border-active: #4a6cf7;
+    --accent: #4a6cf7;
+    --accent2: #6ee7b7;
+    --text: #e8ecf4;
+    --text-muted: #7b8299;
+    --text-dim: #4a5168;
+    --section-bg: #1a2035;
+    --input-bg: #13161e;
+    --radius: 10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Onest', sans-serif;
+    min-height: 100vh;
+    padding: 0 0 60px;
+  }
+
+  /* Header */
+  .header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 40px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+    font-size: 13px;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 5px 10px;
+    border: 1px solid var(--border-active);
+    border-radius: 5px;
+  }
+  .header-title {
+    font-size: 14px;
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+
+  /* Niche switcher */
+  .niche-bar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 40px;
+    overflow-x: auto;
+    display: flex;
+    gap: 2px;
+    scrollbar-width: none;
+  }
+  .niche-bar::-webkit-scrollbar { display: none; }
+
+  .niche-btn {
+    padding: 14px 18px;
+    font-family: 'Onest', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.18s ease;
+    letter-spacing: 0.01em;
+  }
+  .niche-btn:hover { color: var(--text); background: rgba(74,108,247,0.06); }
+  .niche-btn.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+    background: rgba(74,108,247,0.08);
+  }
+
+  /* Form container */
+  .form-wrap {
+    max-width: 860px;
+    margin: 40px auto 0;
+    padding: 0 24px;
+  }
+
+  .form-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 32px;
+    line-height: 1.3;
+    padding-left: 2px;
+  }
+  .form-title span {
+    color: var(--accent);
+  }
+
+  /* Section */
+  .section {
+    margin-bottom: 8px;
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1px solid var(--border);
+    animation: fadeIn 0.25s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-header {
+    background: var(--section-bg);
+    padding: 14px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    background: rgba(74,108,247,0.12);
+    padding: 2px 7px;
+    border-radius: 4px;
+  }
+
+  /* Field rows */
+  .field {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    align-items: start;
+    padding: 0;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    transition: background 0.15s;
+  }
+  .field:last-child { border-bottom: none; }
+  .field:hover { background: rgba(255,255,255,0.015); }
+
+  .field-label {
+    padding: 16px 20px;
+    font-size: 14px;
+    color: var(--text);
+    font-weight: 400;
+    line-height: 1.45;
+    border-right: 1px solid var(--border);
+    grid-column: span 1;
+  }
+
+  .field-input {
+    padding: 10px 14px;
+    border-right: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+  }
+
+  select, input[type="text"] {
+    width: 100%;
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: 'Onest', sans-serif;
+    font-size: 13px;
+    padding: 8px 12px;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%237b8299' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 28px;
+    cursor: pointer;
+  }
+  select:focus, input[type="text"]:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(74,108,247,0.15);
+  }
+  select option { background: #1e2330; }
+
+  .field-comment {
+    padding: 10px 14px;
+  }
+  input.comment-input {
+    width: 100%;
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: 'Onest', sans-serif;
+    font-size: 13px;
+    padding: 8px 12px;
+    outline: none;
+    transition: border-color 0.15s;
+    background-image: none;
+  }
+  input.comment-input::placeholder { color: var(--text-dim); }
+  input.comment-input:focus {
+    border-color: var(--border-active);
+    box-shadow: 0 0 0 3px rgba(74,108,247,0.12);
+  }
+
+  /* Column header row */
+  .col-headers {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    background: rgba(26,32,53,0.5);
+    border-bottom: 1px solid var(--border);
+    padding: 0;
+  }
+  .col-h {
+    padding: 8px 20px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-dim);
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    border-right: 1px solid var(--border);
+  }
+  .col-h:last-child { border-right: none; }
+
+  /* Actions */
+  .actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 28px;
+    padding-bottom: 20px;
+  }
+  .btn-primary {
+    padding: 12px 28px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Onest', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.1s;
+    letter-spacing: 0.01em;
+  }
+  .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+  .btn-primary:active { transform: translateY(0); }
+
+  .btn-secondary {
+    padding: 12px 20px;
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: 'Onest', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-secondary:hover { border-color: var(--border-active); color: var(--text); background: rgba(74,108,247,0.06); }
+
+  /* Copy result */
+  .copy-result {
+    display: none;
+    margin-top: 20px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text-muted);
+    white-space: pre-wrap;
+    line-height: 1.7;
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: var(--accent2);
+    color: #0f2a1e;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: all 0.2s ease;
+    pointer-events: none;
+    z-index: 999;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+
+  /* Niche panel visibility */
+  .niche-panel { display: none; }
+  .niche-panel.active { display: block; }
+
+  @media (max-width: 640px) {
+    .header { padding: 14px 16px; }
+    .niche-bar { padding: 0 8px; }
+    .form-wrap { padding: 0 12px; margin-top: 24px; }
+    .field { grid-template-columns: 1fr; }
+    .field-label { border-right: none; border-bottom: 1px solid var(--border); }
+    .field-input { border-right: none; border-bottom: 1px solid var(--border); }
+    .col-headers { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">Nord Clan</div>
+  <div class="header-title">Бриф на разработку мобильного приложения</div>
+</div>
+
+<div class="niche-bar" id="nicheBar"></div>
+
+<div class="form-wrap">
+  <div id="nichePanels"></div>
+  <div class="actions">
+    <button class="btn-primary" onclick="copyResult()">Скопировать заполненный бриф</button>
+    <button class="btn-secondary" onclick="resetForm()">Сбросить</button>
+  </div>
+  <div class="copy-result" id="copyResult"></div>
+</div>
+
+<div class="toast" id="toast">Скопировано ✓</div>
+
+<script>
+const NICHES = [
+  {
+    id: "foodtech",
+    label: "Foodtech",
+    title: "Разработка мобильного решения для ресторанного бизнеса",
+    sections: [
+      {
+        num: "01", title: "Общая информация о бизнесе",
+        fields: [
+          { label: "Тип бизнеса", options: ["Ресторан / Кафе","Dark kitchen","Маркетплейс ресторанов","Другое"] },
+          { label: "Сколько точек или кухонь сейчас работает", options: ["1–5","5–20","Более 20"] },
+          { label: "Какие каналы заказов используются сейчас", options: ["Заказы в зале","Моб. приложение","Агрегаторы доставок","Телефон / колл-центр"] },
+        ]
+      },
+      {
+        num: "02", title: "Текущие цифровые решения",
+        fields: [
+          { label: "Есть ли сейчас цифровые сервисы для заказов", options: ["Сайт","Моб. приложение","Агрегаторы","POS / ресторанная система","CRM","Пока ничего"] },
+          { label: "Есть ли сейчас мобильное приложение", options: ["Приложение для клиентов","Приложение для курьеров","Приложение для персонала","Моб. приложения нет"] },
+          { label: "Если приложение уже есть", options: ["Необходимо добавить функции","Требуется обновление / переработка","Требуется новое приложение"] },
+        ]
+      },
+      {
+        num: "03", title: "Цель проекта",
+        fields: [
+          { label: "Что вы хотите улучшить с помощью системы или приложения", options: ["Увеличить количество заказов","Ускорить обработку заказов","Автоматизировать кухню","Объединить каналы заказов / уйти от зоопарка систем","Улучшить контроль над процессами","Другое"] },
+        ]
+      },
+      {
+        num: "04", title: "Платформы",
+        fields: [
+          { label: "На каких платформах должно работать приложение", options: ["iOS","Android","Обе платформы"] },
+        ]
+      },
+      {
+        num: "05", title: "Аудитория",
+        fields: [
+          { label: "Ожидаемое количество пользователей", options: ["До 1 000","1 000 – 10 000","10 000 – 100 000","От 100 000","От 1 000 000"] },
+        ]
+      },
+      {
+        num: "06", title: "Интеграции",
+        fields: [
+          { label: "С какими системами необходимо интегрировать решение", options: ["POS-системы (iiko, r_keeper и др.)","Агрегаторы доставки","CRM","Телефония / колл-центр","Платёжные системы","Складские системы"] },
+        ]
+      },
+      {
+        num: "07", title: "Дизайн и прототип",
+        fields: [
+          { label: "Есть ли дизайн или прототип", options: ["Есть готовый дизайн (Figma)","Есть прототип","Есть только идея","Дизайна пока нет"] },
+        ]
+      },
+      {
+        num: "08", title: "Сроки",
+        fields: [
+          { label: "Планируемые сроки запуска", options: ["До 3 месяцев","3–6 месяцев","Сроки пока не определены"] },
+        ]
+      },
+    ]
+  },
+  {
+    id: "fintech",
+    label: "Финтех",
+    title: "Разработка мобильного решения для финансового бизнеса",
+    sections: [
+      {
+        num: "01", title: "Общая информация о бизнесе",
+        fields: [
+          { label: "Тип бизнеса", options: ["Банк / необанк","МФО / кредитование","Страхование","Платёжный сервис","Инвестиционная платформа","Другое"] },
+          { label: "Сколько клиентов сейчас обслуживается", options: ["До 10 000","10 000 – 100 000","100 000 – 1 млн","Более 1 млн"] },
+          { label: "Какие каналы обслуживания используются сейчас", options: ["Офисы / отделения","Веб-сайт","Мобильное приложение","Колл-центр","Партнёрские сети"] },
+        ]
+      },
+      {
+        num: "02", title: "Текущие цифровые решения",
+        fields: [
+          { label: "Есть ли сейчас цифровые сервисы для клиентов", options: ["Веб-кабинет","Мобильное приложение","USSD / SMS-банкинг","Пока ничего"] },
+          { label: "Есть ли сейчас мобильное приложение", options: ["Приложение для клиентов","Приложение для агентов / партнёров","Внутреннее операционное приложение","Моб. приложения нет"] },
+          { label: "Если приложение уже есть", options: ["Необходимо добавить функции","Требуется обновление / переработка","Требуется новое приложение"] },
+        ]
+      },
+      {
+        num: "03", title: "Цель проекта",
+        fields: [
+          { label: "Что вы хотите улучшить с помощью приложения", options: ["Увеличить число активных пользователей","Снизить нагрузку на колл-центр","Ускорить онбординг клиентов","Добавить новые финансовые продукты","Улучшить контроль над операциями","Другое"] },
+        ]
+      },
+      {
+        num: "04", title: "Платформы",
+        fields: [
+          { label: "На каких платформах должно работать приложение", options: ["iOS","Android","Обе платформы"] },
+        ]
+      },
+      {
+        num: "05", title: "Аудитория",
+        fields: [
+          { label: "Ожидаемое количество пользователей", options: ["До 1 000","1 000 – 10 000","10 000 – 100 000","От 100 000","От 1 000 000"] },
+        ]
+      },
+      {
+        num: "06", title: "Интеграции",
+        fields: [
+          { label: "С какими системами необходимо интегрировать решение", options: ["АБС (автоматизированная банковская система)","Платёжные шлюзы","Бюро кредитных историй","CRM","Биометрия / KYC-сервисы","Push / SMS-уведомления"] },
+        ]
+      },
+      {
+        num: "07", title: "Дизайн и прототип",
+        fields: [
+          { label: "Есть ли дизайн или прототип", options: ["Есть готовый дизайн (Figma)","Есть прототип","Есть только идея","Дизайна пока нет"] },
+        ]
+      },
+      {
+        num: "08", title: "Сроки",
+        fields: [
+          { label: "Планируемые сроки запуска", options: ["До 3 месяцев","3–6 месяцев","Сроки пока не определены"] },
+        ]
+      },
+    ]
+  },
+  {
+    id: "medtech",
+    label: "Медицина",
+    title: "Разработка мобильного решения для медицины и здравоохранения",
+    sections: [
+      {
+        num: "01", title: "Общая информация о бизнесе",
+        fields: [
+          { label: "Тип организации", options: ["Частная клиника / сеть клиник","Лаборатория / диагностический центр","Телемедицинский сервис","Аптека / сеть аптек","Страховая медицинская компания","Другое"] },
+          { label: "Сколько пациентов / клиентов в месяц", options: ["До 500","500 – 5 000","5 000 – 50 000","Более 50 000"] },
+          { label: "Как сейчас происходит запись и взаимодействие с пациентами", options: ["По телефону","Через сайт","Через сторонний агрегатор (НаПоправку, DocDoc и др.)","Лично в регистратуре","Мобильное приложение"] },
+        ]
+      },
+      {
+        num: "02", title: "Текущие цифровые решения",
+        fields: [
+          { label: "Есть ли сейчас цифровые сервисы для пациентов", options: ["Личный кабинет на сайте","Мобильное приложение","Чат-бот / мессенджер","Пока ничего"] },
+          { label: "Есть ли сейчас мобильное приложение", options: ["Приложение для пациентов","Приложение для врачей / персонала","Приложение для выездных специалистов","Моб. приложения нет"] },
+          { label: "Если приложение уже есть", options: ["Необходимо добавить функции","Требуется обновление / переработка","Требуется новое приложение"] },
+        ]
+      },
+      {
+        num: "03", title: "Цель проекта",
+        fields: [
+          { label: "Что вы хотите улучшить с помощью приложения", options: ["Упростить запись к врачу","Дать доступ к результатам анализов онлайн","Автоматизировать напоминания и уведомления","Запустить телемедицину / онлайн-консультации","Улучшить контроль лечения пациентов","Другое"] },
+        ]
+      },
+      {
+        num: "04", title: "Платформы",
+        fields: [
+          { label: "На каких платформах должно работать приложение", options: ["iOS","Android","Обе платформы"] },
+        ]
+      },
+      {
+        num: "05", title: "Аудитория",
+        fields: [
+          { label: "Ожидаемое количество пользователей", options: ["До 1 000","1 000 – 10 000","10 000 – 100 000","От 100 000","От 1 000 000"] },
+        ]
+      },
+      {
+        num: "06", title: "Интеграции",
+        fields: [
+          { label: "С какими системами необходимо интегрировать решение", options: ["МИС (медицинская информационная система)","Лабораторная система (LIS)","Расписание врачей","Платёжные системы","Push / SMS-уведомления","Страховые системы / ОМС"] },
+        ]
+      },
+      {
+        num: "07", title: "Дизайн и прототип",
+        fields: [
+          { label: "Есть ли дизайн или прототип", options: ["Есть готовый дизайн (Figma)","Есть прототип","Есть только идея","Дизайна пока нет"] },
+        ]
+      },
+      {
+        num: "08", title: "Сроки",
+        fields: [
+          { label: "Планируемые сроки запуска", options: ["До 3 месяцев","3–6 месяцев","Сроки пока не определены"] },
+        ]
+      },
+    ]
+  },
+  {
+    id: "industry",
+    label: "Промышленность",
+    title: "Разработка мобильного решения для промышленного предприятия",
+    sections: [
+      {
+        num: "01", title: "Общая информация о бизнесе",
+        fields: [
+          { label: "Тип предприятия", options: ["Добывающее производство","Машиностроение / металлообработка","Энергетика / ЖКХ","Химическая / нефтехимическая промышленность","Строительство / девелопмент","Другое"] },
+          { label: "Сколько объектов / площадок", options: ["1","2–5","6–20","Более 20"] },
+          { label: "Какие инструменты используются для управления процессами сейчас", options: ["Бумажные журналы / таблицы","ERP-система","Специализированное ПО","Устаревшее ПО без мобильного доступа","Пока ничего цифрового"] },
+        ]
+      },
+      {
+        num: "02", title: "Текущие цифровые решения",
+        fields: [
+          { label: "Есть ли сейчас цифровые инструменты для сотрудников на объектах", options: ["Веб-портал","Мобильное приложение","Рации / полевые устройства","Пока ничего"] },
+          { label: "Есть ли сейчас мобильное приложение", options: ["Приложение для полевых сотрудников","Приложение для мастеров / бригадиров","Приложение для руководства","Моб. приложения нет"] },
+          { label: "Если приложение уже есть", options: ["Необходимо добавить функции","Требуется обновление / переработка","Требуется новое приложение"] },
+        ]
+      },
+      {
+        num: "03", title: "Цель проекта",
+        fields: [
+          { label: "Что вы хотите улучшить с помощью приложения", options: ["Контроль за выполнением задач на объектах","Цифровизация обходов и осмотров","Управление нарядами-допусками","Сбор данных с оборудования / IoT","Ускорить отчётность и согласования","Другое"] },
+        ]
+      },
+      {
+        num: "04", title: "Платформы",
+        fields: [
+          { label: "На каких платформах должно работать приложение", options: ["iOS","Android","Обе платформы"] },
+        ]
+      },
+      {
+        num: "05", title: "Аудитория",
+        fields: [
+          { label: "Ожидаемое количество пользователей", options: ["До 100","100 – 1 000","1 000 – 10 000","Более 10 000"] },
+        ]
+      },
+      {
+        num: "06", title: "Интеграции",
+        fields: [
+          { label: "С какими системами необходимо интегрировать решение", options: ["ERP (SAP, 1С и др.)","MES / SCADA","IoT / датчики оборудования","CMMS (управление обслуживанием)","ГИС / картография","HR-система"] },
+        ]
+      },
+      {
+        num: "07", title: "Дизайн и прототип",
+        fields: [
+          { label: "Есть ли дизайн или прототип", options: ["Есть готовый дизайн (Figma)","Есть прототип","Есть только идея","Дизайна пока нет"] },
+        ]
+      },
+      {
+        num: "08", title: "Сроки",
+        fields: [
+          { label: "Планируемые сроки запуска", options: ["До 3 месяцев","3–6 месяцев","Сроки пока не определены"] },
+        ]
+      },
+    ]
+  },
+  {
+    id: "manufacturing",
+    label: "Производство",
+    title: "Разработка мобильного решения для производственного предприятия",
+    sections: [
+      {
+        num: "01", title: "Общая информация о бизнесе",
+        fields: [
+          { label: "Тип производства", options: ["Пищевое производство","Лёгкая промышленность / текстиль","Электроника / приборостроение","Мебель / стройматериалы","Фармацевтика","Другое"] },
+          { label: "Сколько производственных линий / цехов", options: ["1–3","4–10","Более 10"] },
+          { label: "Как сейчас отслеживается выполнение производственных задач", options: ["Бумажные задания","Таблицы Excel","ERP / MES","Устная передача","Пока ничего цифрового"] },
+        ]
+      },
+      {
+        num: "02", title: "Текущие цифровые решения",
+        fields: [
+          { label: "Есть ли сейчас цифровые инструменты для производственного персонала", options: ["Веб-портал / рабочее место оператора","Мобильное приложение","Терминалы на линии","Пока ничего"] },
+          { label: "Есть ли сейчас мобильное приложение", options: ["Приложение для операторов / рабочих","Приложение для мастеров / ОТК","Приложение для управления","Моб. приложения нет"] },
+          { label: "Если приложение уже есть", options: ["Необходимо добавить функции","Требуется обновление / переработка","Требуется новое приложение"] },
+        ]
+      },
+      {
+        num: "03", title: "Цель проекта",
+        fields: [
+          { label: "Что вы хотите улучшить с помощью приложения", options: ["Контроль выполнения сменных заданий","Цифровое ОТК / контроль качества","Учёт сырья и материалов в цехе","Ускорить передачу данных между сменами","Снизить количество ошибок и брака","Другое"] },
+        ]
+      },
+      {
+        num: "04", title: "Платформы",
+        fields: [
+          { label: "На каких платформах должно работать приложение", options: ["iOS","Android","Обе платформы"] },
+        ]
+      },
+      {
+        num: "05", title: "Аудитория",
+        fields: [
+          { label: "Ожидаемое количество пользователей", options: ["До 100","100 – 1 000","1 000 – 10 000","Более 10 000"] },
+        ]
+      },
+      {
+        num: "06", title: "Интеграции",
+        fields: [
+          { label: "С какими системами необходимо интегрировать решение", options: ["ERP (1С, SAP и др.)","MES","WMS","Система управления качеством (QMS)","Весовое / измерительное оборудование","HR-система"] },
+        ]
+      },
+      {
+        num: "07", title: "Дизайн и прототип",
+        fields: [
+          { label: "Есть ли дизайн или прототип", options: ["Есть готовый дизайн (Figma)","Есть прототип","Есть только идея","Дизайна пока нет"] },
+        ]
+      },
+      {
+        num: "08", title: "Сроки",
+        fields: [
+          { label: "Планируемые сроки запуска", options: ["До 3 месяцев","3–6 месяцев","Сроки пока не определены"] },
+        ]
+      },
+    ]
+  },
+  {
+    id: "logistics",
+    label: "Склады / логистика",
+    title: "Разработка мобильного решения для склада и логистики",
+    sections: [
+      {
+        num: "01", title: "Общая информация о бизнесе",
+        fields: [
+          { label: "Тип бизнеса", options: ["Складской оператор / 3PL","Собственный склад производителя / ритейлера","Курьерская служба / последняя миля","Транспортная компания","Маркетплейс / фулфилмент","Другое"] },
+          { label: "Сколько складов / объектов", options: ["1","2–5","6–20","Более 20"] },
+          { label: "Как сейчас ведётся учёт и управление операциями", options: ["Бумажные накладные","Таблицы Excel","WMS","1С / ERP","TMS","Пока ничего цифрового"] },
+        ]
+      },
+      {
+        num: "02", title: "Текущие цифровые решения",
+        fields: [
+          { label: "Есть ли сейчас цифровые инструменты для складского персонала", options: ["Веб-интерфейс WMS","Мобильное приложение / ТСД","Сторонний агрегатор","Пока ничего"] },
+          { label: "Есть ли сейчас мобильное приложение", options: ["Приложение для кладовщиков / комплектовщиков","Приложение для водителей / курьеров","Приложение для руководства склада","Моб. приложения нет"] },
+          { label: "Если приложение уже есть", options: ["Необходимо добавить функции","Требуется обновление / переработка","Требуется новое приложение"] },
+        ]
+      },
+      {
+        num: "03", title: "Цель проекта",
+        fields: [
+          { label: "Что вы хотите улучшить с помощью приложения", options: ["Ускорить приёмку и отгрузку товаров","Снизить ошибки при комплектации","Контроль местоположения водителей / курьеров","Цифровое подтверждение доставки (ЭПД)","Управление задачами персонала","Другое"] },
+        ]
+      },
+      {
+        num: "04", title: "Платформы",
+        fields: [
+          { label: "На каких платформах должно работать приложение", options: ["iOS","Android","Обе платформы"] },
+        ]
+      },
+      {
+        num: "05", title: "Аудитория",
+        fields: [
+          { label: "Ожидаемое количество пользователей", options: ["До 100","100 – 1 000","1 000 – 10 000","Более 10 000"] },
+        ]
+      },
+      {
+        num: "06", title: "Интеграции",
+        fields: [
+          { label: "С какими системами необходимо интегрировать решение", options: ["WMS","TMS","ERP / 1С","Маркировка (Честный Знак)","Сканеры / ТСД","Картографический сервис (OSRM, Яндекс)"] },
+        ]
+      },
+      {
+        num: "07", title: "Дизайн и прототип",
+        fields: [
+          { label: "Есть ли дизайн или прототип", options: ["Есть готовый дизайн (Figma)","Есть прототип","Есть только идея","Дизайна пока нет"] },
+        ]
+      },
+      {
+        num: "08", title: "Сроки",
+        fields: [
+          { label: "Планируемые сроки запуска", options: ["До 3 месяцев","3–6 месяцев","Сроки пока не определены"] },
+        ]
+      },
+    ]
+  },
+  {
+    id: "retail",
+    label: "Ритейл",
+    title: "Разработка мобильного решения для ритейла",
+    sections: [
+      {
+        num: "01", title: "Общая информация о бизнесе",
+        fields: [
+          { label: "Тип бизнеса", options: ["Продуктовый ритейл / FMCG","Fashion / одежда и обувь","Электроника / бытовая техника","DIY / строительные материалы","Онлайн-ритейл / e-commerce","Другое"] },
+          { label: "Сколько торговых точек / каналов продаж", options: ["1–5","6–20","21–100","Более 100"] },
+          { label: "Какие каналы продаж используются сейчас", options: ["Офлайн-магазины","Сайт / интернет-магазин","Маркетплейсы (Ozon, Wildberries и др.)","Мобильное приложение","Социальные сети"] },
+        ]
+      },
+      {
+        num: "02", title: "Текущие цифровые решения",
+        fields: [
+          { label: "Есть ли сейчас цифровые сервисы для покупателей", options: ["Сайт / интернет-магазин","Мобильное приложение","Программа лояльности (карты)","Пока ничего"] },
+          { label: "Есть ли сейчас мобильное приложение", options: ["Приложение для покупателей","Приложение для сотрудников магазина","Приложение для торговых представителей","Моб. приложения нет"] },
+          { label: "Если приложение уже есть", options: ["Необходимо добавить функции","Требуется обновление / переработка","Требуется новое приложение"] },
+        ]
+      },
+      {
+        num: "03", title: "Цель проекта",
+        fields: [
+          { label: "Что вы хотите улучшить с помощью приложения", options: ["Увеличить онлайн-продажи","Запустить или улучшить программу лояльности","Персонализировать предложения для покупателей","Ускорить процессы в магазине (инвентаризация, ценники)","Объединить онлайн и офлайн каналы","Другое"] },
+        ]
+      },
+      {
+        num: "04", title: "Платформы",
+        fields: [
+          { label: "На каких платформах должно работать приложение", options: ["iOS","Android","Обе платформы"] },
+        ]
+      },
+      {
+        num: "05", title: "Аудитория",
+        fields: [
+          { label: "Ожидаемое количество пользователей", options: ["До 1 000","1 000 – 10 000","10 000 – 100 000","От 100 000","От 1 000 000"] },
+        ]
+      },
+      {
+        num: "06", title: "Интеграции",
+        fields: [
+          { label: "С какими системами необходимо интегрировать решение", options: ["POS-системы","ERP / 1С","CRM / программа лояльности","Маркетплейсы","Платёжные системы","Push / SMS-уведомления"] },
+        ]
+      },
+      {
+        num: "07", title: "Дизайн и прототип",
+        fields: [
+          { label: "Есть ли дизайн или прототип", options: ["Есть готовый дизайн (Figma)","Есть прототип","Есть только идея","Дизайна пока нет"] },
+        ]
+      },
+      {
+        num: "08", title: "Сроки",
+        fields: [
+          { label: "Планируемые сроки запуска", options: ["До 3 месяцев","3–6 месяцев","Сроки пока не определены"] },
+        ]
+      },
+    ]
+  },
+  {
+    id: "hrtech",
+    label: "HRTech",
+    title: "Разработка мобильного решения для HR и управления персоналом",
+    sections: [
+      {
+        num: "01", title: "Общая информация о бизнесе",
+        fields: [
+          { label: "Тип организации", options: ["Корпоративный HR (внутренний заказчик)","HR-агентство / рекрутинговая компания","EdTech / платформа для обучения","Аутсорсинг персонала","Другое"] },
+          { label: "Сколько сотрудников в компании", options: ["До 100","100 – 500","500 – 5 000","Более 5 000"] },
+          { label: "Как сейчас организованы HR-процессы", options: ["Excel и почта","HRIS-система (SAP HR, 1С:ЗУП и др.)","Сторонние сервисы (hh.ru, Talantix и др.)","Самописные инструменты","Пока ничего цифрового"] },
+        ]
+      },
+      {
+        num: "02", title: "Текущие цифровые решения",
+        fields: [
+          { label: "Есть ли сейчас цифровые инструменты для сотрудников или HR", options: ["Корпоративный портал","Мобильное приложение","Чат-бот в мессенджере","Пока ничего"] },
+          { label: "Есть ли сейчас мобильное приложение", options: ["Приложение для сотрудников (self-service)","Приложение для рекрутёров","Приложение для руководителей","Моб. приложения нет"] },
+          { label: "Если приложение уже есть", options: ["Необходимо добавить функции","Требуется обновление / переработка","Требуется новое приложение"] },
+        ]
+      },
+      {
+        num: "03", title: "Цель проекта",
+        fields: [
+          { label: "Что вы хотите улучшить с помощью приложения", options: ["Ускорить подбор и онбординг сотрудников","Автоматизировать кадровый документооборот","Запустить корпоративное обучение / LMS","Улучшить вовлечённость и удержание персонала","Автоматизировать учёт рабочего времени","Другое"] },
+        ]
+      },
+      {
+        num: "04", title: "Платформы",
+        fields: [
+          { label: "На каких платформах должно работать приложение", options: ["iOS","Android","Обе платформы"] },
+        ]
+      },
+      {
+        num: "05", title: "Аудитория",
+        fields: [
+          { label: "Ожидаемое количество пользователей", options: ["До 100","100 – 1 000","1 000 – 10 000","Более 10 000"] },
+        ]
+      },
+      {
+        num: "06", title: "Интеграции",
+        fields: [
+          { label: "С какими системами необходимо интегрировать решение", options: ["HRIS / 1С:ЗУП","ATS (система подбора)","LMS (система обучения)","Корпоративный портал","Платёжная система (зарплатный проект)","Push / Email-уведомления"] },
+        ]
+      },
+      {
+        num: "07", title: "Дизайн и прототип",
+        fields: [
+          { label: "Есть ли дизайн или прототип", options: ["Есть готовый дизайн (Figma)","Есть прототип","Есть только идея","Дизайна пока нет"] },
+        ]
+      },
+      {
+        num: "08", title: "Сроки",
+        fields: [
+          { label: "Планируемые сроки запуска", options: ["До 3 месяцев","3–6 месяцев","Сроки пока не определены"] },
+        ]
+      },
+    ]
+  },
+];
+
+let currentNiche = NICHES[0].id;
+
+function buildUI() {
+  const bar = document.getElementById('nicheBar');
+  const panels = document.getElementById('nichePanels');
+
+  NICHES.forEach(niche => {
+    // Tab button
+    const btn = document.createElement('button');
+    btn.className = 'niche-btn' + (niche.id === currentNiche ? ' active' : '');
+    btn.textContent = niche.label;
+    btn.onclick = () => switchNiche(niche.id);
+    bar.appendChild(btn);
+
+    // Panel
+    const panel = document.createElement('div');
+    panel.className = 'niche-panel' + (niche.id === currentNiche ? ' active' : '');
+    panel.id = 'panel-' + niche.id;
+
+    const titleEl = document.createElement('div');
+    titleEl.className = 'form-title';
+    titleEl.innerHTML = niche.title.replace('мобильного решения', 'мобильного <span>решения</span>');
+    panel.appendChild(titleEl);
+
+    niche.sections.forEach(section => {
+      const sec = document.createElement('div');
+      sec.className = 'section';
+
+      const hdr = document.createElement('div');
+      hdr.className = 'section-header';
+      hdr.innerHTML = `<span class="section-num">${section.num}</span>${section.title}`;
+      sec.appendChild(hdr);
+
+      const colHdr = document.createElement('div');
+      colHdr.className = 'col-headers';
+      colHdr.innerHTML = `
+        <div class="col-h">Вопрос</div>
+        <div class="col-h">Ответ</div>
+        <div class="col-h">Комментарий</div>
+      `;
+      sec.appendChild(colHdr);
+
+      section.fields.forEach((field, fi) => {
+        const row = document.createElement('div');
+        row.className = 'field';
+
+        const label = document.createElement('div');
+        label.className = 'field-label';
+        label.textContent = field.label;
+
+        const inputWrap = document.createElement('div');
+        inputWrap.className = 'field-input';
+
+        const sel = document.createElement('select');
+        sel.id = `${niche.id}-${section.num}-${fi}`;
+        const emptyOpt = document.createElement('option');
+        emptyOpt.value = '';
+        emptyOpt.textContent = '— выбрать —';
+        sel.appendChild(emptyOpt);
+        field.options.forEach(opt => {
+          const o = document.createElement('option');
+          o.value = opt;
+          o.textContent = opt;
+          sel.appendChild(o);
+        });
+        inputWrap.appendChild(sel);
+
+        const commentWrap = document.createElement('div');
+        commentWrap.className = 'field-comment';
+        const inp = document.createElement('input');
+        inp.type = 'text';
+        inp.className = 'comment-input';
+        inp.placeholder = 'Уточнение...';
+        inp.id = `${niche.id}-${section.num}-${fi}-comment`;
+        commentWrap.appendChild(inp);
+
+        row.appendChild(label);
+        row.appendChild(inputWrap);
+        row.appendChild(commentWrap);
+        sec.appendChild(row);
+      });
+
+      panel.appendChild(sec);
+    });
+
+    panels.appendChild(panel);
+  });
+}
+
+function switchNiche(id) {
+  currentNiche = id;
+  document.querySelectorAll('.niche-btn').forEach((btn, i) => {
+    btn.classList.toggle('active', NICHES[i].id === id);
+  });
+  document.querySelectorAll('.niche-panel').forEach(p => {
+    p.classList.toggle('active', p.id === 'panel-' + id);
+  });
+  document.getElementById('copyResult').style.display = 'none';
+}
+
+function copyResult() {
+  const niche = NICHES.find(n => n.id === currentNiche);
+  let lines = [];
+  lines.push(niche.title);
+  lines.push('');
+
+  niche.sections.forEach(section => {
+    lines.push(`${section.num}. ${section.title}`);
+    section.fields.forEach((field, fi) => {
+      const sel = document.getElementById(`${niche.id}-${section.num}-${fi}`);
+      const comment = document.getElementById(`${niche.id}-${section.num}-${fi}-comment`);
+      const val = sel ? sel.value : '—';
+      const com = comment && comment.value ? ` (${comment.value})` : '';
+      lines.push(`  ${field.label}: ${val || '—'}${com}`);
+    });
+    lines.push('');
+  });
+
+  const text = lines.join('\n');
+  const resultEl = document.getElementById('copyResult');
+  resultEl.textContent = text;
+  resultEl.style.display = 'block';
+
+  navigator.clipboard.writeText(text).then(() => {
+    showToast();
+  }).catch(() => {
+    // fallback — already visible in block
+  });
+}
+
+function resetForm() {
+  const niche = NICHES.find(n => n.id === currentNiche);
+  niche.sections.forEach(section => {
+    section.fields.forEach((_, fi) => {
+      const sel = document.getElementById(`${niche.id}-${section.num}-${fi}`);
+      const comment = document.getElementById(`${niche.id}-${section.num}-${fi}-comment`);
+      if (sel) sel.value = '';
+      if (comment) comment.value = '';
+    });
+  });
+  document.getElementById('copyResult').style.display = 'none';
+}
+
+function showToast() {
+  const t = document.getElementById('toast');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+buildUI();
+</script>
+</body>
+</html>
