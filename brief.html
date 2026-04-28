@@ -584,7 +584,7 @@
 
     <div id="nichePanels"></div>
     <div class="actions">
-      <button class="btn-primary" id="sendBtn" onclick="sendToTelegram()">📨 Отправить бриф</button>
+      <button class="btn-primary" id="sendBtn" onclick="handleSend()">📨 Отправить бриф</button>
       <button class="btn-secondary" onclick="copyResult()">Скопировать</button>
       <button class="btn-secondary" onclick="resetForm()">Сбросить</button>
     </div>
@@ -1255,22 +1255,118 @@ function resetForm() {
   document.getElementById('copyResult').style.display = 'none';
 }
 
-async function sendToTelegram() {
-  const text = collectText();
+const SHEETS_CSV = 'https://docs.google.com/spreadsheets/d/1oGddn-b35WvMHN1BgcKEY1mslfR95-clrlzFXxPxDjc/export?format=csv';
+
+const RULES = `
+Ты — ассистент менеджера по продажам мобильной разработки в компании Nord Clan.
+Тебе на вход поступает заполненный бриф от потенциального клиента и список демо-приложений компании.
+Твоя задача — написать короткую, чёткую рекомендацию для менеджера на русском языке.
+
+ПРАВИЛА И СКРИПТЫ:
+
+1. БЮДЖЕТ < 1,5 млн руб:
+Не говори клиенту "это не наш бюджет". Скажи: "Мы можем уложиться в бюджет, если расставим приоритеты. Давайте определим что даст вашему бизнесу максимальный эффект в первую очередь — это и войдёт в первый релиз. Остальное сделаем во втором." Цель — не отпугнуть, а переструктурировать ожидания.
+
+2. БЮДЖЕТ 1,5–2,5 млн + хотят нативку:
+Скажи: "Нативная разработка — это два отдельных приложения на двух разных языках, поэтому стоит от 2,5 млн. Но у нас есть Flutter — один код, обе платформы, визуально не отличить от нативки. Большинство наших клиентов выбирают именно его."
+
+3. Обе платформы + интеграции + дизайн + срок до 3 месяцев:
+Склоняй к MVP. Скажи: "За 3 месяца реально сделать MVP — это рабочее приложение с ключевыми функциями. Давайте вместе выберем 2–3 самых важных для запуска фичи, остальное добавим в следующем релизе. Это позволит вам быстро выйти на рынок и уже получать обратную связь от пользователей."
+
+4. Wearables / Computer Vision / ML:
+Скажи: "Для этого типа проектов стоимость считается индивидуально — слишком много зависит от деталей. Предлагаю организовать короткий созвон с руководителем направления, это займёт 30 минут и даст вам чёткую картину по срокам и бюджету."
+
+5. Интеграций 3 и более:
+Скажи: "Интеграции — это отдельная история по срокам и стоимости. Уточните у клиента: какие конкретно системы, есть ли у них готовое API и документация к нему? Если API нет — это может удвоить стоимость. Без этой информации смета будет неточной."
+
+6. Ниша клиента совпадает с демо из реестра:
+Скажи клиенту: "У нас есть готовое демо для вашей отрасли — и мы можем адаптировать его под фирстиль вашей компании, чтобы вы увидели как это будет выглядеть именно у вас. Предлагаю организовать короткую демонстрацию."
+
+СТЕК:
+- Flutter — основной стек, подходит для большинства проектов, обе платформы из одной кодовой базы. Стоимость от 1,5 млн.
+- KMP (Kotlin Multiplatform) — когда нужна глубокая интеграция с нативными API, сложная бизнес-логика, клиент уже имеет нативные команды.
+- Нативка (Swift / Kotlin) — когда требуется максимальная производительность, работа с железом (Wearables, CV/ML на устройстве), или клиент категорически настаивает. Стоимость от 2,5 млн.
+
+ФОРМАТ ОТВЕТА:
+- Начни с эмодзи 💡 и заголовка "Рекомендации для менеджера"
+- Используй короткие пункты с эмодзи (🔴 🟡 🟢)
+- Если есть релевантные демо — перечисли их отдельным блоком 📱
+- Максимум 200 слов, только самое важное
+- Пиши как коллега коллеге, без канцелярщины
+`;
+
+async function fetchDemos() {
+  try {
+    const res = await fetch(SHEETS_CSV);
+    const text = await res.text();
+    const lines = text.trim().split('\n');
+    const headers = lines[0].split(',');
+    const rows = lines.slice(1).map(line => {
+      const cols = line.split(',');
+      const obj = {};
+      headers.forEach((h, i) => { obj[h.trim()] = (cols[i] || '').trim(); });
+      return obj;
+    }).filter(r => r['Приложение'] && r['Статус'] === 'Готово');
+    return rows.map(r => `• ${r['Приложение']} (${r['Категория']}, ${r['Платформа']})`).join('\n');
+  } catch(e) {
+    return 'Реестр демо недоступен';
+  }
+}
+
+async function getAIRecommendation(briefText, demos) {
+  const prompt = `${RULES}
+
+РЕЕСТР ДЕМО-ПРИЛОЖЕНИЙ NORD CLAN (статус "Готово"):
+${demos}
+
+ЗАПОЛНЕННЫЙ БРИФ:
+${briefText}
+
+Напиши рекомендацию для менеджера.`;
+
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1000,
+      messages: [{ role: 'user', content: prompt }]
+    })
+  });
+  const data = await res.json();
+  return data.content[0].text;
+}
+
+async function sendToTelegram(text, chatId) {
+  return fetch('https://api.telegram.org/bot' + TG_TOKEN + '/sendMessage', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ chat_id: chatId, text, parse_mode: 'Markdown' })
+  });
+}
+
+async function handleSend() {
+  const briefText = collectText();
   const btn = document.getElementById('sendBtn');
   btn.textContent = '⏳ Отправляем...'; btn.disabled = true;
+
   try {
-    const res = await fetch('https://api.telegram.org/bot' + TG_TOKEN + '/sendMessage', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ chat_id: TG_CHAT_ID, text, parse_mode: 'Markdown' })
-    });
-    const data = await res.json();
-    if (data.ok) {
-      btn.textContent = '✅ Отправлено!';
-      showToast('Бриф отправлен в Telegram ✓');
-      setTimeout(() => { btn.textContent = '📨 Отправить бриф'; btn.disabled = false; }, 3000);
-    } else throw new Error(data.description);
+    // 1. Send brief
+    const r1 = await sendToTelegram(briefText, TG_CHAT_ID);
+    const d1 = await r1.json();
+    if (!d1.ok) throw new Error(d1.description);
+
+    // 2. Get demos + AI recommendation
+    btn.textContent = '🤖 Готовим рекомендации...';
+    const [demos, ] = await Promise.all([fetchDemos()]);
+    const recommendation = await getAIRecommendation(briefText, demos);
+
+    // 3. Send recommendation
+    await sendToTelegram(recommendation, TG_CHAT_ID);
+
+    btn.textContent = '✅ Отправлено!';
+    showToast('Бриф и рекомендации отправлены ✓');
+    setTimeout(() => { btn.textContent = '📨 Отправить бриф'; btn.disabled = false; }, 3000);
   } catch(e) {
     btn.textContent = '❌ Ошибка'; btn.disabled = false;
     alert('Не удалось отправить: ' + e.message);
