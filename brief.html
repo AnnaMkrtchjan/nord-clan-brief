@@ -1367,11 +1367,14 @@ async function getAIRecommendation(briefText) {
 }
 
 
-async function sendToTelegram(text, chatId) {
+async function sendToTelegram(text, chatId, useMarkdown = false) {
+  const body = useMarkdown
+    ? { chat_id: chatId, text, parse_mode: 'Markdown' }
+    : { chat_id: chatId, text };
   return fetch('https://api.telegram.org/bot' + TG_TOKEN + '/sendMessage', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ chat_id: chatId, text, parse_mode: 'Markdown' })
+    body: JSON.stringify(body)
   });
 }
 
@@ -1391,7 +1394,7 @@ async function handleSend() {
     const recommendation = await getAIRecommendation(briefText);
 
     // 3. Send recommendation
-    await sendToTelegram(recommendation, TG_CHAT_ID);
+    await sendToTelegram(recommendation, TG_CHAT_ID, true);
 
     btn.textContent = '📨 Отправить бриф'; btn.disabled = false;
     showStep3(recommendation);
