@@ -535,6 +535,29 @@
 
   .form-title { margin-bottom: 24px; }
 
+.result-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 16px;
+  padding: 28px;
+  margin-top: 24px;
+}
+.result-sent-badge {
+  display: inline-block;
+  background: rgba(34,197,94,0.15);
+  border: 1px solid rgba(34,197,94,0.3);
+  color: #4ade80;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 13px;
+  margin-bottom: 24px;
+}
+.result-recommendation {
+  color: #e2e8f0;
+  font-size: 15px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
 </style>
 </head>
 <body>
@@ -589,6 +612,25 @@
       <button class="btn-secondary" onclick="resetForm()">Сбросить</button>
     </div>
     <div class="copy-result" id="copyResult"></div>
+  </div>
+
+  <!-- STEP 3 — результат -->
+  <div id="step3" style="display:none">
+    <div class="step2-header">
+      <button class="btn-back" onclick="goToStep3Back()">← Назад к брифу</button>
+      <div>
+        <div class="step2-company" id="step3Company"></div>
+        <div class="form-title">Рекомендации готовы</div>
+      </div>
+    </div>
+    <div class="result-card">
+      <div class="result-sent-badge">✅ Бриф и рекомендации отправлены в Telegram</div>
+      <div class="result-recommendation" id="resultText"></div>
+      <div class="actions" style="margin-top:24px">
+        <button class="btn-secondary" onclick="copyRecommendation()">📋 Скопировать</button>
+        <button class="btn-secondary" onclick="resetForm()">🔄 Новый бриф</button>
+      </div>
+    </div>
   </div>
 
 </div>
@@ -1351,13 +1393,35 @@ async function handleSend() {
     // 3. Send recommendation
     await sendToTelegram(recommendation, TG_CHAT_ID);
 
-    btn.textContent = '✅ Отправлено!';
-    showToast('Бриф и рекомендации отправлены ✓');
-    setTimeout(() => { btn.textContent = '📨 Отправить бриф'; btn.disabled = false; }, 3000);
+    btn.textContent = '📨 Отправить бриф'; btn.disabled = false;
+    showStep3(recommendation);
   } catch(e) {
     btn.textContent = '❌ Ошибка'; btn.disabled = false;
     alert('Не удалось отправить: ' + e.message);
   }
+}
+
+function showStep3(recommendation) {
+  document.getElementById('step2').style.display = 'none';
+  document.getElementById('step3').style.display = 'block';
+  document.getElementById('step3Company').textContent = document.getElementById('step2Company').textContent;
+  // Convert markdown-like formatting to HTML
+  const html = recommendation
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/
+/g, '<br>');
+  document.getElementById('resultText').innerHTML = html;
+  window.scrollTo(0, 0);
+}
+
+function goToStep3Back() {
+  document.getElementById('step3').style.display = 'none';
+  document.getElementById('step2').style.display = 'block';
+}
+
+function copyRecommendation() {
+  const text = document.getElementById('resultText').innerText;
+  navigator.clipboard.writeText(text).then(() => showToast('Скопировано ✓')).catch(() => {});
 }
 
 function showToast(msg) {
