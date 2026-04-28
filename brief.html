@@ -1314,10 +1314,29 @@ async function fetchDemos() {
 }
 
 async function getAIRecommendation(briefText) {
+  const demos = await fetchDemos();
+  const cases = `
+• Клиент (конфиденциально) | финтех | Android | автоматизация процессов | https://nordclan.com/projects/onlajn-kassa-dlya-magazinov-kafe-salonov-i-vremennyh-tochek-prodazh
+• Новосибирскэнергосбыт | жкх | iOS, Android | клиентский сервис | https://nordclan.com/projects/servis-opovescheniy-communalnye-uslugi
+• Клиент (конфиденциально) | фудтех | Android | автоматизация процессов
+• Автосуши Франчайзинг и к | фудтех | Flutter/KMP, Android | продажи | https://nordclan.com/projects/redizajn-i-frontend-mobilnogo-prilozheniya-dostavka-edy
+• ApiBank (МАГ Девелопмент) | финтех/HR | Flutter/KMP, iOS, Android | HR-маркетплейс поиска работы | https://nordclan.com/projects/hr-marketplejs-dlya-poiska-raboty-i-uslug
+• Uzum | фудтех/IT | iOS, Android | приложение для курьеров | https://nordclan.com/projects/mobilnoe-prilozhenie-dlya-kurerov-dostavka-edy
+• Клиент (конфиденциально) | ритейл | Android | контроль качества
+• ФЦБ | финтех | Flutter | клиентский сервис / банкротство | https://nordclan.com/projects/fcb-prilozhenie-dlya-bankrotstva
+• Клиент (конфиденциально) | транспорт и логистика | iOS, Android | мониторинг процессов
+• Байбол | финтех | Android | МКК клиентский сервис | https://nordclan.com/projects/mobile-mkk
+• Джаст Лук (Jump Taxi) | транспорт и логистика | Android | автоматизация такси | https://nordclan.com/projects/jumptaxi
+• Клиент (конфиденциально) | медицина | Android | клиентский сервис (лаборатория) | https://nordclan.com/projects/medtech-invitro
+• Медси | медицина | iOS, Android | телемедицина/клиентский сервис | https://nordclan.com/projects/medsi-smartmed
+• Nord Clan | IT | iOS, Android | внутреннее приложение бронирования | https://nordclan.com/projects/mobile-booking
+• Самолет Плюс | девелопмент | iOS, Android | автоматизация агентства недвижимости | https://nordclan.com/projects/mobile-samolet
+`.trim();
+
   const res = await fetch('https://195.133.94.136:8443/recommend', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ brief: briefText })
+    body: JSON.stringify({ brief: briefText, demos, cases })
   });
   if (!res.ok) throw new Error('Сервер рекомендаций недоступен');
   const data = await res.json();
