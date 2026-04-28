@@ -1313,29 +1313,17 @@ async function fetchDemos() {
   }
 }
 
-async function getAIRecommendation(briefText, demos) {
-  const prompt = `${RULES}
-
-РЕЕСТР ДЕМО-ПРИЛОЖЕНИЙ NORD CLAN (статус "Готово"):
-${demos}
-
-ЗАПОЛНЕННЫЙ БРИФ:
-${briefText}
-
-Напиши рекомендацию для менеджера.`;
-
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
+async function getAIRecommendation(briefText) {
+  const res = await fetch('http://195.133.94.136:5000/recommend', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 1000,
-      messages: [{ role: 'user', content: prompt }]
-    })
+    body: JSON.stringify({ brief: briefText })
   });
+  if (!res.ok) throw new Error('Сервер рекомендаций недоступен');
   const data = await res.json();
-  return data.content[0].text;
+  return data.recommendation;
 }
+
 
 async function sendToTelegram(text, chatId) {
   return fetch('https://api.telegram.org/bot' + TG_TOKEN + '/sendMessage', {
@@ -1358,8 +1346,7 @@ async function handleSend() {
 
     // 2. Get demos + AI recommendation
     btn.textContent = '🤖 Готовим рекомендации...';
-    const [demos, ] = await Promise.all([fetchDemos()]);
-    const recommendation = await getAIRecommendation(briefText, demos);
+    const recommendation = await getAIRecommendation(briefText);
 
     // 3. Send recommendation
     await sendToTelegram(recommendation, TG_CHAT_ID);
