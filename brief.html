@@ -1314,7 +1314,7 @@ async function fetchDemos() {
 }
 
 async function getAIRecommendation(briefText) {
-  const res = await fetch('http://195.133.94.136:5000/recommend', {
+  const res = await fetch('https://195.133.94.136:8443/recommend', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ brief: briefText })
