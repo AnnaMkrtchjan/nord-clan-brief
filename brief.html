@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Бриф — Nord Clan</title>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #07090f;
+    --surface: #0c1018;
+    --surface2: #111826;
+    --border: #1a2535;
+    --border-active: #1a6fff;
+    --accent: #1a6fff;
+    --accent-glow: rgba(26,111,255,0.18);
+    --accent2: #00d4aa;
+    --text: #dde5f5;
+    --text-muted: #5a6e90;
+    --text-dim: #2e3f5c;
+    --section-bg: #0a1020;
+    --input-bg: #060810;
+    --radius: 10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Onest', sans-serif;
+    min-height: 100vh;
+    padding: 0 0 80px;
+    background-image: radial-gradient(ellipse at 20% 0%, rgba(26,111,255,0.07) 0%, transparent 60%),
+                      radial-gradient(ellipse at 80% 100%, rgba(0,212,170,0.04) 0%, transparent 50%);
+  }
+
+  /* Header */
+  .header {
+    background: rgba(12,16,24,0.95);
+    border-bottom: 1px solid var(--border);
+    padding: 0 40px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    height: 60px;
+    backdrop-filter: blur(12px);
+  }
+  .logo-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+  }
+  .logo-img {
+    height: 28px;
+    filter: brightness(0) invert(1);
+  }
+  .logo-divider {
+    width: 1px;
+    height: 20px;
+    background: var(--border);
+  }
+  .header-title {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 400;
+    letter-spacing: 0.01em;
+  }
+
+  /* Niche switcher */
+  .niche-bar {
+    background: rgba(12,16,24,0.8);
+    border-bottom: 1px solid var(--border);
+    padding: 0 40px;
+    overflow-x: auto;
+    display: flex;
+    gap: 2px;
+    scrollbar-width: none;
+    backdrop-filter: blur(8px);
+  }
+  .niche-bar::-webkit-scrollbar { display: none; }
+
+  .niche-btn {
+    padding: 13px 18px;
+    font-family: 'Onest', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.18s ease;
+    letter-spacing: 0.01em;
+  }
+  .niche-btn:hover { color: var(--text); background: var(--accent-glow); }
+  .niche-btn.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+    background: var(--accent-glow);
+  }
+
+  /* Form container */
+  .form-wrap {
+    max-width: 900px;
+    margin: 36px auto 0;
+    padding: 0 24px;
+  }
+
+  .form-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 28px;
+    line-height: 1.3;
+  }
+  .form-title span { color: var(--accent); }
+
+  /* Section */
+  .section {
+    margin-bottom: 8px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    animation: fadeIn 0.22s ease;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-header {
+    background: var(--section-bg);
+    padding: 12px 20px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    background: var(--accent-glow);
+    padding: 2px 7px;
+    border-radius: 4px;
+    border: 1px solid rgba(26,111,255,0.25);
+  }
+
+  .col-headers {
+    display: grid;
+    grid-template-columns: 1.2fr 1.3fr 1fr;
+    background: rgba(10,16,32,0.6);
+    border-bottom: 1px solid var(--border);
+  }
+  .col-h {
+    padding: 7px 16px;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-right: 1px solid var(--border);
+  }
+  .col-h:last-child { border-right: none; }
+
+  /* Field rows */
+  .field {
+    display: grid;
+    grid-template-columns: 1.2fr 1.3fr 1fr;
+    align-items: start;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    transition: background 0.12s;
+  }
+  .field:last-child { border-bottom: none; }
+  .field:hover { background: rgba(26,111,255,0.025); }
+
+  .field-label {
+    padding: 14px 16px;
+    font-size: 13.5px;
+    color: var(--text);
+    font-weight: 400;
+    line-height: 1.45;
+    border-right: 1px solid var(--border);
+  }
+
+  .field-input {
+    padding: 10px 12px;
+    border-right: 1px solid var(--border);
+    overflow: visible;
+    position: relative;
+  }
+
+  /* Multiselect */
+  .multiselect {
+    position: relative;
+    width: 100%;
+  }
+  .ms-trigger {
+    width: 100%;
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: 'Onest', sans-serif;
+    font-size: 12.5px;
+    padding: 7px 28px 7px 10px;
+    cursor: pointer;
+    text-align: left;
+    transition: border-color 0.15s;
+    position: relative;
+    min-height: 34px;
+    line-height: 1.4;
+  }
+  .ms-trigger::after {
+    content: '';
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0; height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 5px solid var(--text-muted);
+    transition: transform 0.15s;
+  }
+  .ms-trigger.open::after { transform: translateY(-50%) rotate(180deg); }
+  .ms-trigger:hover, .ms-trigger.open { border-color: var(--accent); }
+  .ms-trigger.has-value { color: var(--text); }
+  .ms-trigger:not(.has-value) { color: var(--text-dim); }
+
+  .ms-dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: #0e1526;
+    border: 1px solid var(--border-active);
+    border-radius: 8px;
+    z-index: 200;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    overflow: hidden;
+    max-height: 220px;
+    overflow-y: auto;
+  }
+  .ms-dropdown.open { display: block; }
+  .ms-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    font-size: 12.5px;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: background 0.1s, color 0.1s;
+    border-bottom: 1px solid rgba(26,37,53,0.6);
+  }
+  .ms-option:last-child { border-bottom: none; }
+  .ms-option:hover { background: var(--accent-glow); color: var(--text); }
+  .ms-option.selected { color: var(--accent); background: var(--accent-glow); }
+  .ms-checkbox {
+    width: 14px; height: 14px;
+    border: 1.5px solid var(--border-active);
+    border-radius: 3px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    background: transparent;
+    transition: background 0.1s;
+  }
+  .ms-option.selected .ms-checkbox {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  .ms-option.selected .ms-checkbox::after {
+    content: '';
+    width: 8px; height: 5px;
+    border-left: 1.5px solid #fff;
+    border-bottom: 1.5px solid #fff;
+    transform: rotate(-45deg) translateY(-1px);
+    display: block;
+  }
+  .ms-tags {
+    display: flex; flex-wrap: wrap; gap: 4px;
+  }
+  .ms-tag {
+    background: var(--accent-glow);
+    border: 1px solid rgba(26,111,255,0.3);
+    color: var(--accent);
+    font-size: 11px;
+    padding: 2px 7px;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .ms-tag-remove {
+    cursor: pointer;
+    opacity: 0.6;
+    font-size: 13px;
+    line-height: 1;
+  }
+  .ms-tag-remove:hover { opacity: 1; }
+
+  .field-comment { padding: 10px 12px; }
+  input.comment-input {
+    width: 100%;
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: 'Onest', sans-serif;
+    font-size: 12.5px;
+    padding: 7px 10px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  input.comment-input::placeholder { color: var(--text-dim); }
+  input.comment-input:focus { border-color: var(--border-active); }
+
+  /* Actions */
+  .actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 24px;
+    flex-wrap: wrap;
+  }
+  .btn-primary {
+    padding: 11px 26px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Onest', sans-serif;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.1s, box-shadow 0.15s;
+    box-shadow: 0 4px 20px rgba(26,111,255,0.3);
+  }
+  .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 6px 24px rgba(26,111,255,0.4); }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-primary:disabled { opacity: 0.6; cursor: default; transform: none; }
+
+  .btn-secondary {
+    padding: 11px 18px;
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: 'Onest', sans-serif;
+    font-size: 13.5px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-secondary:hover { border-color: var(--border-active); color: var(--text); background: var(--accent-glow); }
+
+  .copy-result {
+    display: none;
+    margin-top: 16px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    color: var(--text-muted);
+    white-space: pre-wrap;
+    line-height: 1.7;
+  }
+
+  .toast {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    background: var(--accent2);
+    color: #042e26;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: all 0.2s ease;
+    pointer-events: none;
+    z-index: 999;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+
+  .niche-panel { display: none; }
+  .niche-panel.active { display: block; }
+
+  @media (max-width: 640px) {
+    .header { padding: 0 16px; }
+    .niche-bar { padding: 0 8px; }
+    .form-wrap { padding: 0 12px; margin-top: 20px; }
+    .field {
+    overflow: visible; grid-template-columns: 1fr; }
+    .field-label { border-right: none; border-bottom: 1px solid var(--border); }
+    .field-input {
+    overflow: visible; border-right: none; border-bottom: 1px solid var(--border); }
+    .col-headers { display: none; }
+  }
+
+  /* Step layout */
+  .step-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text);
+    margin-top: 48px;
+    margin-bottom: 8px;
+  }
+  .step-sub {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-bottom: 32px;
+  }
+
+  .intro-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    max-width: 680px;
+  }
+
+  .intro-field { display: flex; flex-direction: column; gap: 10px; }
+  .intro-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .intro-input {
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'Onest', sans-serif;
+    font-size: 15px;
+    padding: 12px 16px;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .intro-input::placeholder { color: var(--text-dim); }
+  .intro-input:focus {
+    border-color: var(--border-active);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+
+  /* Niche grid */
+  .niche-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .niche-card {
+    padding: 9px 16px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: 'Onest', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    background: var(--input-bg);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .niche-card:hover { border-color: var(--border-active); color: var(--text); background: var(--accent-glow); }
+  .niche-card.selected {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-glow);
+    font-weight: 600;
+  }
+
+  .btn-next {
+    align-self: flex-start;
+    padding: 13px 32px;
+    font-size: 15px;
+  }
+  .btn-next:disabled {
+    opacity: 0.35;
+    cursor: default;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+
+  /* Step 2 header */
+  .step2-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-top: 32px;
+    margin-bottom: 28px;
+  }
+  .btn-back {
+    padding: 8px 14px;
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    font-family: 'Onest', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+    margin-top: 4px;
+  }
+  .btn-back:hover { border-color: var(--border-active); color: var(--text); }
+
+  .step2-company {
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.04em;
+  }
+
+  .form-title { margin-bottom: 24px; }
+
+</style>
+</head>
+<body>
+
+<div class="header">
+  <a class="logo-wrap" href="https://nordclan.com" target="_blank">
+    <img class="logo-img" src="https://static.tildacdn.com/tild6664-6161-4664-b461-356238643865/logo-new-small-cut-f.svg" alt="Nord Clan">
+  </a>
+  <div class="logo-divider"></div>
+  <div class="header-title">Бриф на разработку мобильного приложения</div>
+</div>
+
+<div class="form-wrap">
+
+  <!-- STEP 1 -->
+  <div id="step1">
+    <div class="step-title">Давайте познакомимся</div>
+
+    <div class="intro-card">
+      <div class="intro-field">
+        <label class="intro-label">Название компании</label>
+        <input type="text" id="companyName" class="intro-input" placeholder="Например: ООО Ромашка">
+      </div>
+      <div class="intro-field">
+        <label class="intro-label">Отрасль / ниша</label>
+        <div class="niche-grid" id="nicheGrid"></div>
+      </div>
+      <div class="intro-field">
+        <label class="intro-label">Бюджет (ориентир)</label>
+        <input type="text" id="budgetInput" class="intro-input" placeholder="Например: до 3 млн руб., или пока не определён">
+      </div>
+      <button class="btn-primary btn-next" id="btnNext" onclick="goToStep2()" disabled>
+        Перейти к вопросам →
+      </button>
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div id="step2" style="display:none">
+    <div class="step2-header">
+      <button class="btn-back" onclick="goToStep1()">← Назад</button>
+      <div>
+        <div class="step2-company" id="step2Company"></div>
+        <div class="form-title" id="step2Title"></div>
+      </div>
+    </div>
+
+    <div id="nichePanels"></div>
+    <div class="actions">
+      <button class="btn-primary" id="sendBtn" onclick="sendToTelegram()">📨 Отправить бриф</button>
+      <button class="btn-secondary" onclick="copyResult()">Скопировать</button>
+      <button class="btn-secondary" onclick="resetForm()">Сбросить</button>
+    </div>
+    <div class="copy-result" id="copyResult"></div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const NICHES = [
+  {
+    id: "foodtech", label: "Foodtech",
+    title: "Разработка мобильного решения для ресторанного бизнеса",
+    sections: [
+      { num: "01", title: "Общая информация о бизнесе", fields: [
+        { label: "Тип бизнеса", options: ["Ресторан / Кафе","Dark kitchen","Маркетплейс ресторанов","Другое"] },
+        { label: "Сколько точек или кухонь сейчас работает", options: ["1–5","5–20","Более 20"] },
+        { label: "Какие каналы заказов используются сейчас", options: ["Заказы в зале","Моб. приложение","Агрегаторы доставок","Телефон / колл-центр"], multi: true },
+      ]},
+      { num: "02", title: "Текущие цифровые решения", fields: [
+        { label: "Есть ли сейчас цифровые сервисы для заказов", options: ["Сайт","Моб. приложение","Агрегаторы","POS / ресторанная система","CRM","Пока ничего"], multi: true },
+        { label: "Есть ли сейчас мобильное приложение", options: ["Приложение для клиентов","Приложение для курьеров","Приложение для персонала","Моб. приложения нет"], multi: true },
+        { label: "Если приложение уже есть", options: ["Необходимо добавить функции","Требуется обновление / переработка","Требуется новое приложение"] },
+      ]},
+      { num: "03", title: "Цель проекта", fields: [
+        { label: "Что вы хотите улучшить", options: ["Увеличить количество заказов","Ускорить обработку заказов","Автоматизировать кухню","Объединить каналы заказов","Улучшить контроль над процессами","Другое"], multi: true },
+      ]},
+      { num: "04", title: "Платформы", fields: [
+        { label: "На каких платформах должно работать приложение", options: ["iOS","Android","Обе платформы"] },
+      ]},
+      { num: "05", title: "Аудитория", fields: [
+        { label: "Ожидаемое количество пользователей", options: ["До 1 000","1 000 – 10 000","10 000 – 100 000","От 100 000","От 1 000 000"] },
+      ]},
+      { num: "06", title: "Интеграции", fields: [
+        { label: "С какими системами необходимо интегрировать решение", options: ["POS-системы (iiko, r_keeper и др.)","Агрегаторы доставки","CRM","Телефония / колл-центр","Платёжные системы","Складские системы"], multi: true },
+      ]},
+      { num: "07", title: "Дизайн и прототип", fields: [
+        { label: "Есть ли дизайн или прототип", options: ["Есть готовый дизайн (Figma)","Есть прототип","Есть только идея","Дизайна пока нет"] },
+      ]},
+      { num: "08", title: "Сроки", fields: [
+        { label: "Планируемые сроки запуска", options: ["До 3 месяцев","3–6 месяцев","Сроки пока не определены"] },
+      ]},
+    ]
+  },
+  {
+    id: "fintech", label: "Fintech",
+    title: "Разработка мобильного решения для финансового бизнеса",
+    sections: [
+      { num: "01", title: "Общая информация о бизнесе", fields: [
+        { label: "Тип бизнеса", options: ["Банк / необанк","МФО / кредитование","Страхование","Платёжный сервис","Инвестиционная платформа","Другое"] },
+        { label: "Сколько клиентов сейчас обслуживается", options: ["До 10 000","10 000 – 100 000","100 000 – 1 млн","Более 1 млн"] },
+        { label: "Какие каналы обслуживания используются сейчас", options: ["Офисы / отделения","Веб-сайт","Мобильное приложение","Колл-центр","Партнёрские сети"], multi: true },
+      ]},
+      { num: "02", title: "Текущие цифровые решения", fields: [
+        { label: "Есть ли сейчас цифровые сервисы для клиентов", options: ["Веб-кабинет","Мобильное приложение","USSD / SMS-банкинг","Пока ничего"], multi: true },
+        { label: "Есть ли сейчас мобильное приложение", options: ["Приложение для клиентов","Приложение для агентов / партнёров","Внутреннее операционное приложение","Моб. приложения нет"], multi: true },
+        { label: "Если приложение уже есть", options: ["Необходимо добавить функции","Требуется обновление / переработка","Требуется новое приложение"] },
+      ]},
+      { num: "03", title: "Цель проекта", fields: [
+        { label: "Что вы хотите улучшить с помощью приложения", options: ["Увеличить число активных пользователей","Снизить нагрузку на колл-центр","Ускорить онбординг клиентов","Добавить новые финансовые продукты","Улучшить контроль над операциями","Другое"], multi: true },
+      ]},
+      { num: "04", title: "Платформы", fields: [
+        { label: "На каких платформах должно работать приложение", options: ["iOS","Android","Обе платформы"] },
+      ]},
+      { num: "05", title: "Аудитория", fields: [
+        { label: "Ожидаемое количество пользователей", options: ["До 1 000","1 000 – 10 000","10 000 – 100 000","От 100 000","От 1 000 000"] },
+      ]},
+      { num: "06", title: "Интеграции", fields: [
+        { label: "С какими системами необходимо интегрировать решение", options: ["АБС (автоматизированная банковская система)","Платёжные шлюзы","Бюро кредитных историй","CRM","Биометрия / KYC-сервисы","Push / SMS-уведомления"], multi: true },
+      ]},
+      { num: "07", title: "Дизайн и прототип", fields: [
+        { label: "Есть ли дизайн или прототип", options: ["Есть готовый дизайн (Figma)","Есть прототип","Есть только идея","Дизайна пока нет"] },
+      ]},
+      { num: "08", title: "Сроки", fields: [
+        { label: "Планируемые сроки запуска", options: ["До 3 месяцев","3–6 месяцев","Сроки пока не определены"] },
+      ]},
+    ]
+  },
+  {
+    id: "medtech", label: "Медицина",
+    title: "Разработка мобильного решения для медицины и здравоохранения",
+    sections: [
+      { num: "01", title: "Общая информация о бизнесе", fields: [
+        { label: "Тип организации", options: ["Частная клиника / сеть клиник","Лаборатория / диагностический центр","Телемедицинский сервис","Аптека / сеть аптек","Страховая медицинская компания","Другое"] },
+        { label: "Сколько пациентов / клиентов в месяц", options: ["До 500","500 – 5 000","5 000 – 50 000","Более 50 000"] },
+        { label: "Как сейчас происходит запись и взаимодействие с пациентами", options: ["По телефону","Через сайт","Через сторонний агрегатор (НаПоправку, DocDoc и др.)","Лично в регистратуре","Мобильное приложение"], multi: true },
+      ]},
+      { num: "02", title: "Текущие цифровые решения", fields: [
+        { label: "Есть ли сейчас цифровые сервисы для пациентов", options: ["Личный кабинет на сайте","Мобильное приложение","Чат-бот / мессенджер","Пока ничего"], multi: true },
+        { label: "Есть ли сейчас мобильное приложение", options: ["Приложение для пациентов","Приложение для врачей / персонала","Приложение для выездных специалистов","Моб. приложения нет"], multi: true },
+        { label: "Если приложение уже есть", options: ["Необходимо добавить функции","Требуется обновление / переработка","Требуется новое приложение"] },
+      ]},
+      { num: "03", title: "Цель проекта", fields: [
+        { label: "Что вы хотите улучшить с помощью приложения", options: ["Упростить запись к врачу","Дать доступ к результатам анализов онлайн","Автоматизировать напоминания и уведомления","Запустить телемедицину / онлайн-консультации","Улучшить контроль лечения пациентов","Другое"], multi: true },
+      ]},
+      { num: "04", title: "Платформы", fields: [
+        { label: "На каких платформах должно работать приложение", options: ["iOS","Android","Обе платформы"] },
+      ]},
+      { num: "05", title: "Аудитория", fields: [
+        { label: "Ожидаемое количество пользователей", options: ["До 1 000","1 000 – 10 000","10 000 – 100 000","От 100 000","От 1 000 000"] },
+      ]},
+      { num: "06", title: "Интеграции", fields: [
+        { label: "С какими системами необходимо интегрировать решение", options: ["МИС (медицинская информационная система)","Лабораторная система (LIS)","Расписание врачей","Платёжные системы","Push / SMS-уведомления","Страховые системы / ОМС"], multi: true },
+      ]},
+      { num: "07", title: "Дизайн и прототип", fields: [
+        { label: "Есть ли дизайн или прототип", options: ["Есть готовый дизайн (Figma)","Есть прототип","Есть только идея","Дизайна пока нет"] },
+      ]},
+      { num: "08", title: "Сроки", fields: [
+        { label: "Планируемые сроки запуска", options: ["До 3 месяцев","3–6 месяцев","Сроки пока не определены"] },
+      ]},
+    ]
+  },
+  {
+    id: "industry", label: "Промышленность",
+    title: "Разработка мобильного решения для промышленного предприятия",
+    sections: [
+      { num: "01", title: "Общая информация о бизнесе", fields: [
+        { label: "Тип предприятия", options: ["Добывающее производство","Машиностроение / металлообработка","Энергетика / ЖКХ","Химическая / нефтехимическая промышленность","Строительство / девелопмент","Другое"] },
+        { label: "Сколько объектов / площадок", options: ["1","2–5","6–20","Более 20"] },
+        { label: "Какие инструменты используются для управления процессами сейчас", options: ["Бумажные журналы / таблицы","ERP-система","Специализированное ПО","Устаревшее ПО без мобильного доступа","Пока ничего цифрового"], multi: true },
+      ]},
+      { num: "02", title: "Текущие цифровые решения", fields: [
+        { label: "Есть ли сейчас цифровые инструменты для сотрудников на объектах", options: ["Веб-портал","Мобильное приложение","Рации / полевые устройства","Пока ничего"], multi: true },
+        { label: "Есть ли сейчас мобильное приложение", options: ["Приложение для полевых сотрудников","Приложение для мастеров / бригадиров","Приложение для руководства","Моб. приложения нет"], multi: true },
+        { label: "Если приложение уже есть", options: ["Необходимо добавить функции","Требуется обновление / переработка","Требуется новое приложение"] },
+      ]},
+      { num: "03", title: "Цель проекта", fields: [
+        { label: "Что вы хотите улучшить с помощью приложения", options: ["Контроль за выполнением задач на объектах","Цифровизация обходов и осмотров","Управление нарядами-допусками","Сбор данных с оборудования / IoT","Ускорить отчётность и согласования","Другое"], multi: true },
+      ]},
+      { num: "04", title: "Платформы", fields: [
+        { label: "На каких платформах должно работать приложение", options: ["iOS","Android","Обе платформы"] },
+      ]},
+      { num: "05", title: "Аудитория", fields: [
+        { label: "Ожидаемое количество пользователей", options: ["До 100","100 – 1 000","1 000 – 10 000","Более 10 000"] },
+      ]},
+      { num: "06", title: "Интеграции", fields: [
+        { label: "С какими системами необходимо интегрировать решение", options: ["ERP (SAP, 1С и др.)","MES / SCADA","IoT / датчики оборудования","CMMS (управление обслуживанием)","ГИС / картография","HR-система"], multi: true },
+      ]},
+      { num: "07", title: "Дизайн и прототип", fields: [
+        { label: "Есть ли дизайн или прототип", options: ["Есть готовый дизайн (Figma)","Есть прототип","Есть только идея","Дизайна пока нет"] },
+      ]},
+      { num: "08", title: "Сроки", fields: [
+        { label: "Планируемые сроки запуска", options: ["До 3 месяцев","3–6 месяцев","Сроки пока не определены"] },
+      ]},
+    ]
+  },
+  {
+    id: "manufacturing", label: "Производство",
+    title: "Разработка мобильного решения для производственного предприятия",
+    sections: [
+      { num: "01", title: "Общая информация о бизнесе", fields: [
+        { label: "Тип производства", options: ["Пищевое производство","Лёгкая промышленность / текстиль","Электроника / приборостроение","Мебель / стройматериалы","Фармацевтика","Другое"] },
+        { label: "Сколько производственных линий / цехов", options: ["1–3","4–10","Более 10"] },
+        { label: "Как сейчас отслеживается выполнение производственных задач", options: ["Бумажные задания","Таблицы Excel","ERP / MES","Устная передача","Пока ничего цифрового"], multi: true },
+      ]},
+      { num: "02", title: "Текущие цифровые решения", fields: [
+        { label: "Есть ли сейчас цифровые инструменты для производственного персонала", options: ["Веб-портал / рабочее место оператора","Мобильное приложение","Терминалы на линии","Пока ничего"], multi: true },
+        { label: "Есть ли сейчас мобильное приложение", options: ["Приложение для операторов / рабочих","Приложение для мастеров / ОТК","Приложение для управления","Моб. приложения нет"], multi: true },
+        { label: "Если приложение уже есть", options: ["Необходимо добавить функции","Требуется обновление / переработка","Требуется новое приложение"] },
+      ]},
+      { num: "03", title: "Цель проекта", fields: [
+        { label: "Что вы хотите улучшить с помощью приложения", options: ["Контроль выполнения сменных заданий","Цифровое ОТК / контроль качества","Учёт сырья и материалов в цехе","Ускорить передачу данных между сменами","Снизить количество ошибок и брака","Другое"], multi: true },
+      ]},
+      { num: "04", title: "Платформы", fields: [
+        { label: "На каких платформах должно работать приложение", options: ["iOS","Android","Обе платформы"] },
+      ]},
+      { num: "05", title: "Аудитория", fields: [
+        { label: "Ожидаемое количество пользователей", options: ["До 100","100 – 1 000","1 000 – 10 000","Более 10 000"] },
+      ]},
+      { num: "06", title: "Интеграции", fields: [
+        { label: "С какими системами необходимо интегрировать решение", options: ["ERP (1С, SAP и др.)","MES","WMS","Система управления качеством (QMS)","Весовое / измерительное оборудование","HR-система"], multi: true },
+      ]},
+      { num: "07", title: "Дизайн и прототип", fields: [
+        { label: "Есть ли дизайн или прототип", options: ["Есть готовый дизайн (Figma)","Есть прототип","Есть только идея","Дизайна пока нет"] },
+      ]},
+      { num: "08", title: "Сроки", fields: [
+        { label: "Планируемые сроки запуска", options: ["До 3 месяцев","3–6 месяцев","Сроки пока не определены"] },
+      ]},
+    ]
+  },
+  {
+    id: "logistics", label: "Склады / логистика",
+    title: "Разработка мобильного решения для склада и логистики",
+    sections: [
+      { num: "01", title: "Общая информация о бизнесе", fields: [
+        { label: "Тип бизнеса", options: ["Складской оператор / 3PL","Собственный склад производителя / ритейлера","Курьерская служба / последняя миля","Транспортная компания","Маркетплейс / фулфилмент","Другое"] },
+        { label: "Сколько складов / объектов", options: ["1","2–5","6–20","Более 20"] },
+        { label: "Как сейчас ведётся учёт и управление операциями", options: ["Бумажные накладные","Таблицы Excel","WMS","1С / ERP","TMS","Пока ничего цифрового"], multi: true },
+      ]},
+      { num: "02", title: "Текущие цифровые решения", fields: [
+        { label: "Есть ли сейчас цифровые инструменты для складского персонала", options: ["Веб-интерфейс WMS","Мобильное приложение / ТСД","Сторонний агрегатор","Пока ничего"], multi: true },
+        { label: "Есть ли сейчас мобильное приложение", options: ["Приложение для кладовщиков / комплектовщиков","Приложение для водителей / курьеров","Приложение для руководства склада","Моб. приложения нет"], multi: true },
+        { label: "Если приложение уже есть", options: ["Необходимо добавить функции","Требуется обновление / переработка","Требуется новое приложение"] },
+      ]},
+      { num: "03", title: "Цель проекта", fields: [
+        { label: "Что вы хотите улучшить с помощью приложения", options: ["Ускорить приёмку и отгрузку товаров","Снизить ошибки при комплектации","Контроль местоположения водителей / курьеров","Цифровое подтверждение доставки (ЭПД)","Управление задачами персонала","Другое"], multi: true },
+      ]},
+      { num: "04", title: "Платформы", fields: [
+        { label: "На каких платформах должно работать приложение", options: ["iOS","Android","Обе платформы"] },
+      ]},
+      { num: "05", title: "Аудитория", fields: [
+        { label: "Ожидаемое количество пользователей", options: ["До 100","100 – 1 000","1 000 – 10 000","Более 10 000"] },
+      ]},
+      { num: "06", title: "Интеграции", fields: [
+        { label: "С какими системами необходимо интегрировать решение", options: ["WMS","TMS","ERP / 1С","Маркировка (Честный Знак)","Сканеры / ТСД","Картографический сервис (OSRM, Яндекс)"], multi: true },
+      ]},
+      { num: "07", title: "Дизайн и прототип", fields: [
+        { label: "Есть ли дизайн или прототип", options: ["Есть готовый дизайн (Figma)","Есть прототип","Есть только идея","Дизайна пока нет"] },
+      ]},
+      { num: "08", title: "Сроки", fields: [
+        { label: "Планируемые сроки запуска", options: ["До 3 месяцев","3–6 месяцев","Сроки пока не определены"] },
+      ]},
+    ]
+  },
+  {
+    id: "retail", label: "Ритейл",
+    title: "Разработка мобильного решения для ритейла",
+    sections: [
+      { num: "01", title: "Общая информация о бизнесе", fields: [
+        { label: "Тип бизнеса", options: ["Продуктовый ритейл / FMCG","Fashion / одежда и обувь","Электроника / бытовая техника","DIY / строительные материалы","Онлайн-ритейл / e-commerce","Другое"] },
+        { label: "Сколько торговых точек / каналов продаж", options: ["1–5","6–20","21–100","Более 100"] },
+        { label: "Какие каналы продаж используются сейчас", options: ["Офлайн-магазины","Сайт / интернет-магазин","Маркетплейсы (Ozon, Wildberries и др.)","Мобильное приложение","Социальные сети"], multi: true },
+      ]},
+      { num: "02", title: "Текущие цифровые решения", fields: [
+        { label: "Есть ли сейчас цифровые сервисы для покупателей", options: ["Сайт / интернет-магазин","Мобильное приложение","Программа лояльности (карты)","Пока ничего"], multi: true },
+        { label: "Есть ли сейчас мобильное приложение", options: ["Приложение для покупателей","Приложение для сотрудников магазина","Приложение для торговых представителей","Моб. приложения нет"], multi: true },
+        { label: "Если приложение уже есть", options: ["Необходимо добавить функции","Требуется обновление / переработка","Требуется новое приложение"] },
+      ]},
+      { num: "03", title: "Цель проекта", fields: [
+        { label: "Что вы хотите улучшить с помощью приложения", options: ["Увеличить онлайн-продажи","Запустить или улучшить программу лояльности","Персонализировать предложения для покупателей","Ускорить процессы в магазине (инвентаризация, ценники)","Объединить онлайн и офлайн каналы","Другое"], multi: true },
+      ]},
+      { num: "04", title: "Платформы", fields: [
+        { label: "На каких платформах должно работать приложение", options: ["iOS","Android","Обе платформы"] },
+      ]},
+      { num: "05", title: "Аудитория", fields: [
+        { label: "Ожидаемое количество пользователей", options: ["До 1 000","1 000 – 10 000","10 000 – 100 000","От 100 000","От 1 000 000"] },
+      ]},
+      { num: "06", title: "Интеграции", fields: [
+        { label: "С какими системами необходимо интегрировать решение", options: ["POS-системы","ERP / 1С","CRM / программа лояльности","Маркетплейсы","Платёжные системы","Push / SMS-уведомления"], multi: true },
+      ]},
+      { num: "07", title: "Дизайн и прототип", fields: [
+        { label: "Есть ли дизайн или прототип", options: ["Есть готовый дизайн (Figma)","Есть прототип","Есть только идея","Дизайна пока нет"] },
+      ]},
+      { num: "08", title: "Сроки", fields: [
+        { label: "Планируемые сроки запуска", options: ["До 3 месяцев","3–6 месяцев","Сроки пока не определены"] },
+      ]},
+    ]
+  },
+  {
+    id: "hrtech", label: "HRTech",
+    title: "Разработка мобильного решения для HR и управления персоналом",
+    sections: [
+      { num: "01", title: "Общая информация о бизнесе", fields: [
+        { label: "Тип организации", options: ["Корпоративный HR (внутренний заказчик)","HR-агентство / рекрутинговая компания","EdTech / платформа для обучения","Аутсорсинг персонала","Другое"] },
+        { label: "Сколько сотрудников в компании", options: ["До 100","100 – 500","500 – 5 000","Более 5 000"] },
+        { label: "Как сейчас организованы HR-процессы", options: ["Excel и почта","HRIS-система (SAP HR, 1С:ЗУП и др.)","Сторонние сервисы (hh.ru, Talantix и др.)","Самописные инструменты","Пока ничего цифрового"], multi: true },
+      ]},
+      { num: "02", title: "Текущие цифровые решения", fields: [
+        { label: "Есть ли сейчас цифровые инструменты для сотрудников или HR", options: ["Корпоративный портал","Мобильное приложение","Чат-бот в мессенджере","Пока ничего"], multi: true },
+        { label: "Есть ли сейчас мобильное приложение", options: ["Приложение для сотрудников (self-service)","Приложение для рекрутёров","Приложение для руководителей","Моб. приложения нет"], multi: true },
+        { label: "Если приложение уже есть", options: ["Необходимо добавить функции","Требуется обновление / переработка","Требуется новое приложение"] },
+      ]},
+      { num: "03", title: "Цель проекта", fields: [
+        { label: "Что вы хотите улучшить с помощью приложения", options: ["Ускорить подбор и онбординг сотрудников","Автоматизировать кадровый документооборот","Запустить корпоративное обучение / LMS","Улучшить вовлечённость и удержание персонала","Автоматизировать учёт рабочего времени","Другое"], multi: true },
+      ]},
+      { num: "04", title: "Платформы", fields: [
+        { label: "На каких платформах должно работать приложение", options: ["iOS","Android","Обе платформы"] },
+      ]},
+      { num: "05", title: "Аудитория", fields: [
+        { label: "Ожидаемое количество пользователей", options: ["До 100","100 – 1 000","1 000 – 10 000","Более 10 000"] },
+      ]},
+      { num: "06", title: "Интеграции", fields: [
+        { label: "С какими системами необходимо интегрировать решение", options: ["HRIS / 1С:ЗУП","ATS (система подбора)","LMS (система обучения)","Корпоративный портал","Платёжная система (зарплатный проект)","Push / Email-уведомления"], multi: true },
+      ]},
+      { num: "07", title: "Дизайн и прототип", fields: [
+        { label: "Есть ли дизайн или прототип", options: ["Есть готовый дизайн (Figma)","Есть прототип","Есть только идея","Дизайна пока нет"] },
+      ]},
+      { num: "08", title: "Сроки", fields: [
+        { label: "Планируемые сроки запуска", options: ["До 3 месяцев","3–6 месяцев","Сроки пока не определены"] },
+      ]},
+    ]
+  },
+];
+
+const TG_TOKEN = '8688679133:AAHkPwDz8ml9lSnIlhYDY3h-qUm7VolnKTc';
+const TG_CHAT_ID = '219923148';
+
+let currentNiche = NICHES[0].id;
+const msState = {}; // { fieldId: Set of selected values }
+
+function msId(nicheId, secNum, fi) { return `${nicheId}-${secNum}-${fi}`; }
+
+function buildMultiselect(fieldId, options) {
+  msState[fieldId] = new Set();
+  const wrap = document.createElement('div');
+  wrap.className = 'multiselect';
+
+  const trigger = document.createElement('button');
+  trigger.className = 'ms-trigger';
+  trigger.type = 'button';
+  trigger.id = fieldId + '-trigger';
+  trigger.textContent = '— выбрать —';
+
+  const dropdown = document.createElement('div');
+  dropdown.className = 'ms-dropdown';
+  dropdown.id = fieldId + '-dropdown';
+
+  options.forEach(opt => {
+    const item = document.createElement('div');
+    item.className = 'ms-option';
+    item.innerHTML = `<span class="ms-checkbox"></span><span>${opt}</span>`;
+    item.onclick = (e) => {
+      e.stopPropagation();
+      const set = msState[fieldId];
+      if (set.has(opt)) { set.delete(opt); item.classList.remove('selected'); }
+      else { set.add(opt); item.classList.add('selected'); }
+      updateTrigger(fieldId, trigger);
+    };
+    dropdown.appendChild(item);
+  });
+
+  trigger.onclick = (e) => {
+    e.stopPropagation();
+    const isOpen = dropdown.classList.contains('open');
+    closeAllDropdowns();
+    if (!isOpen) { dropdown.classList.add('open'); trigger.classList.add('open'); }
+  };
+
+  wrap.appendChild(trigger);
+  wrap.appendChild(dropdown);
+  return wrap;
+}
+
+function updateTrigger(fieldId, trigger) {
+  const set = msState[fieldId];
+  if (set.size === 0) {
+    trigger.innerHTML = '— выбрать —';
+    trigger.classList.remove('has-value');
+  } else {
+    trigger.classList.add('has-value');
+    const tagsDiv = document.createElement('div');
+    tagsDiv.className = 'ms-tags';
+    set.forEach(v => {
+      const tag = document.createElement('span');
+      tag.className = 'ms-tag';
+      tag.innerHTML = `${v}<span class="ms-tag-remove" data-val="${v}" data-fid="${fieldId}">×</span>`;
+      tagsDiv.appendChild(tag);
+    });
+    trigger.innerHTML = '';
+    trigger.appendChild(tagsDiv);
+    trigger.querySelectorAll('.ms-tag-remove').forEach(btn => {
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        const val = btn.dataset.val;
+        const fid = btn.dataset.fid;
+        msState[fid].delete(val);
+        const dd = document.getElementById(fid + '-dropdown');
+        dd.querySelectorAll('.ms-option').forEach(opt => {
+          if (opt.querySelector('span:last-child').textContent === val) opt.classList.remove('selected');
+        });
+        updateTrigger(fid, document.getElementById(fid + '-trigger'));
+      };
+    });
+  }
+}
+
+function closeAllDropdowns() {
+  document.querySelectorAll('.ms-dropdown.open').forEach(d => d.classList.remove('open'));
+  document.querySelectorAll('.ms-trigger.open').forEach(t => t.classList.remove('open'));
+}
+
+document.addEventListener('click', closeAllDropdowns);
+
+function buildUI() {
+  const panels = document.getElementById('nichePanels');
+
+  NICHES.forEach(niche => {
+    const panel = document.createElement('div');
+    panel.className = 'niche-panel' + (niche.id === currentNiche ? ' active' : '');
+    panel.id = 'panel-' + niche.id;
+
+    const titleEl = document.createElement('div');
+    titleEl.className = 'form-title';
+    titleEl.innerHTML = niche.title.replace('мобильного решения', 'мобильного <span>решения</span>');
+    panel.appendChild(titleEl);
+
+    niche.sections.forEach(section => {
+      const sec = document.createElement('div');
+      sec.className = 'section';
+
+      const hdr = document.createElement('div');
+      hdr.className = 'section-header';
+      hdr.innerHTML = `<span class="section-num">${section.num}</span>${section.title}`;
+      sec.appendChild(hdr);
+
+      const colHdr = document.createElement('div');
+      colHdr.className = 'col-headers';
+      colHdr.innerHTML = `<div class="col-h">Вопрос</div><div class="col-h">Ответ</div><div class="col-h">Комментарий</div>`;
+      sec.appendChild(colHdr);
+
+      section.fields.forEach((field, fi) => {
+        const fid = msId(niche.id, section.num, fi);
+        const row = document.createElement('div');
+        row.className = 'field';
+
+        const label = document.createElement('div');
+        label.className = 'field-label';
+        label.textContent = field.label;
+
+        const inputWrap = document.createElement('div');
+        inputWrap.className = 'field-input';
+
+        if (field.multi) {
+          inputWrap.appendChild(buildMultiselect(fid, field.options));
+        } else {
+          const sel = document.createElement('select');
+          sel.id = fid;
+          sel.style.cssText = 'width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:Onest,sans-serif;font-size:12.5px;padding:7px 28px 7px 10px;outline:none;appearance:none;-webkit-appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'12\' height=\'12\' viewBox=\'0 0 12 12\'%3E%3Cpath fill=\'%235a6e90\' d=\'M6 8L1 3h10z\'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;transition:border-color .15s;';
+          const empty = document.createElement('option');
+          empty.value = ''; empty.textContent = '— выбрать —';
+          sel.appendChild(empty);
+          field.options.forEach(opt => {
+            const o = document.createElement('option');
+            o.value = opt; o.textContent = opt;
+            sel.appendChild(o);
+          });
+          sel.onfocus = () => sel.style.borderColor = 'var(--border-active)';
+          sel.onblur = () => sel.style.borderColor = 'var(--border)';
+          inputWrap.appendChild(sel);
+        }
+
+        const commentWrap = document.createElement('div');
+        commentWrap.className = 'field-comment';
+        const inp = document.createElement('input');
+        inp.type = 'text'; inp.className = 'comment-input';
+        inp.placeholder = 'Уточнение...'; inp.id = fid + '-comment';
+        commentWrap.appendChild(inp);
+
+        row.appendChild(label); row.appendChild(inputWrap); row.appendChild(commentWrap);
+        sec.appendChild(row);
+      });
+
+      panel.appendChild(sec);
+    });
+
+    panels.appendChild(panel);
+  });
+}
+
+function getFieldValue(niche, section, fi) {
+  const fid = msId(niche.id, section.num, fi);
+  const field = section.fields[fi];
+  if (field.multi) {
+    const set = msState[fid];
+    return set && set.size > 0 ? [...set].join(', ') : '—';
+  } else {
+    const sel = document.getElementById(fid);
+    return sel && sel.value ? sel.value : '—';
+  }
+}
+
+function switchNiche(id) {
+  currentNiche = id;
+  document.querySelectorAll('.niche-btn').forEach((btn, i) => {
+    btn.classList.toggle('active', NICHES[i].id === id);
+  });
+  document.querySelectorAll('.niche-panel').forEach(p => {
+    p.classList.toggle('active', p.id === 'panel-' + id);
+  });
+  document.getElementById('copyResult').style.display = 'none';
+  closeAllDropdowns();
+}
+
+function collectText() {
+  const niche = NICHES.find(n => n.id === currentNiche);
+  let lines = ['📋 *Новый бриф — ' + niche.label + '*', '', '*' + niche.title + '*', ''];
+  niche.sections.forEach(section => {
+    lines.push('*' + section.num + '. ' + section.title + '*');
+    section.fields.forEach((field, fi) => {
+      const val = getFieldValue(niche, section, fi);
+      const comment = document.getElementById(msId(niche.id, section.num, fi) + '-comment');
+      const com = comment && comment.value ? ' (' + comment.value + ')' : '';
+      lines.push('• ' + field.label + ': ' + val + com);
+    });
+    lines.push('');
+  });
+  return lines.join('\n');
+}
+
+function copyResult() {
+  const niche = NICHES.find(n => n.id === currentNiche);
+  const company = document.getElementById('companyName').value.trim();
+  const budget = document.getElementById('budgetInput').value.trim();
+  let lines = [niche.title];
+  if (company) lines.push('Компания: ' + company);
+  if (budget) lines.push('Бюджет: ' + budget);
+  lines.push('');
+  niche.sections.forEach(section => {
+    lines.push(section.num + '. ' + section.title);
+    section.fields.forEach((field, fi) => {
+      const val = getFieldValue(niche, section, fi);
+      const comment = document.getElementById(msId(niche.id, section.num, fi) + '-comment');
+      const com = comment && comment.value ? ' (' + comment.value + ')' : '';
+      lines.push('  ' + field.label + ': ' + val + com);
+    });
+    lines.push('');
+  });
+  const text = lines.join('\n');
+  const el = document.getElementById('copyResult');
+  el.textContent = text; el.style.display = 'block';
+  navigator.clipboard.writeText(text).then(() => showToast('Скопировано ✓')).catch(() => {});
+}
+
+function resetForm() {
+  const niche = NICHES.find(n => n.id === currentNiche);
+  niche.sections.forEach(section => {
+    section.fields.forEach((field, fi) => {
+      const fid = msId(niche.id, section.num, fi);
+      if (field.multi) {
+        msState[fid] = new Set();
+        const trigger = document.getElementById(fid + '-trigger');
+        if (trigger) { trigger.textContent = '— выбрать —'; trigger.classList.remove('has-value'); }
+        const dd = document.getElementById(fid + '-dropdown');
+        if (dd) dd.querySelectorAll('.ms-option').forEach(o => o.classList.remove('selected'));
+      } else {
+        const sel = document.getElementById(fid);
+        if (sel) sel.value = '';
+      }
+      const comment = document.getElementById(fid + '-comment');
+      if (comment) comment.value = '';
+    });
+  });
+  document.getElementById('copyResult').style.display = 'none';
+}
+
+async function sendToTelegram() {
+  const text = collectText();
+  const btn = document.getElementById('sendBtn');
+  btn.textContent = '⏳ Отправляем...'; btn.disabled = true;
+  try {
+    const res = await fetch('https://api.telegram.org/bot' + TG_TOKEN + '/sendMessage', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: TG_CHAT_ID, text, parse_mode: 'Markdown' })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      btn.textContent = '✅ Отправлено!';
+      showToast('Бриф отправлен в Telegram ✓');
+      setTimeout(() => { btn.textContent = '📨 Отправить бриф'; btn.disabled = false; }, 3000);
+    } else throw new Error(data.description);
+  } catch(e) {
+    btn.textContent = '❌ Ошибка'; btn.disabled = false;
+    alert('Не удалось отправить: ' + e.message);
+  }
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+
+// ---- Step logic ----
+let selectedNicheId = null;
+
+function buildStep1() {
+  const grid = document.getElementById('nicheGrid');
+  NICHES.forEach(niche => {
+    const card = document.createElement('button');
+    card.type = 'button';
+    card.className = 'niche-card';
+    card.textContent = niche.label;
+    card.onclick = () => {
+      document.querySelectorAll('.niche-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      selectedNicheId = niche.id;
+      document.getElementById('btnNext').disabled = false;
+    };
+    grid.appendChild(card);
+  });
+
+  // enable next on company name input too (optional — niche required)
+  document.getElementById('companyName').addEventListener('input', () => {
+    document.getElementById('btnNext').disabled = !selectedNicheId;
+  });
+}
+
+function goToStep2() {
+  if (!selectedNicheId) return;
+  currentNiche = selectedNicheId;
+  const niche = NICHES.find(n => n.id === currentNiche);
+  const company = document.getElementById('companyName').value.trim();
+
+  document.getElementById('step2Company').textContent = company ? company.toUpperCase() : '';
+  document.getElementById('step2Title').textContent = niche.title;
+
+  // Show only the active niche panel
+  document.querySelectorAll('.niche-panel').forEach(p => {
+    p.style.display = p.id === 'panel-' + currentNiche ? 'block' : 'none';
+  });
+
+  document.getElementById('step1').style.display = 'none';
+  document.getElementById('step2').style.display = 'block';
+  window.scrollTo(0, 0);
+}
+
+function goToStep1() {
+  document.getElementById('step1').style.display = 'block';
+  document.getElementById('step2').style.display = 'none';
+  window.scrollTo(0, 0);
+}
+
+function resetForm() {
+  // Reset step 2 fields for current niche
+  const niche = NICHES.find(n => n.id === currentNiche);
+  if (niche) {
+    niche.sections.forEach(section => {
+      section.fields.forEach((field, fi) => {
+        const fid = msId(niche.id, section.num, fi);
+        if (field.multi) {
+          msState[fid] = new Set();
+          const trigger = document.getElementById(fid + '-trigger');
+          if (trigger) { trigger.textContent = '— выбрать —'; trigger.classList.remove('has-value'); }
+          const dd = document.getElementById(fid + '-dropdown');
+          if (dd) dd.querySelectorAll('.ms-option').forEach(o => o.classList.remove('selected'));
+        } else {
+          const sel = document.getElementById(fid);
+          if (sel) sel.value = '';
+        }
+        const comment = document.getElementById(fid + '-comment');
+        if (comment) comment.value = '';
+      });
+    });
+  }
+  document.getElementById('copyResult').style.display = 'none';
+}
+
+function collectText() {
+  const niche = NICHES.find(n => n.id === currentNiche);
+  const company = document.getElementById('companyName').value.trim();
+  const budget = document.getElementById('budgetInput').value.trim();
+
+  let lines = [];
+  lines.push('📋 *Новый бриф — ' + niche.label + '*');
+  if (company) lines.push('🏢 *Компания:* ' + company);
+  if (budget) lines.push('💰 *Бюджет:* ' + budget);
+  lines.push('');
+  lines.push('*' + niche.title + '*');
+  lines.push('');
+
+  niche.sections.forEach(section => {
+    lines.push('*' + section.num + '. ' + section.title + '*');
+    section.fields.forEach((field, fi) => {
+      const val = getFieldValue(niche, section, fi);
+      const comment = document.getElementById(msId(niche.id, section.num, fi) + '-comment');
+      const com = comment && comment.value ? ' (' + comment.value + ')' : '';
+      lines.push('• ' + field.label + ': ' + val + com);
+    });
+    lines.push('');
+  });
+  return lines.join('\n');
+}
+
+buildUI();
+buildStep1();
+
+</script>
+</body>
+</html>
