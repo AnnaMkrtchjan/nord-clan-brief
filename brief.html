@@ -1193,21 +1193,7 @@ function switchNiche(id) {
   closeAllDropdowns();
 }
 
-function collectText() {
-  const niche = NICHES.find(n => n.id === currentNiche);
-  let lines = ['📋 *Новый бриф — ' + niche.label + '*', '', '*' + niche.title + '*', ''];
-  niche.sections.forEach(section => {
-    lines.push('*' + section.num + '. ' + section.title + '*');
-    section.fields.forEach((field, fi) => {
-      const val = getFieldValue(niche, section, fi);
-      const comment = document.getElementById(msId(niche.id, section.num, fi) + '-comment');
-      const com = comment && comment.value ? ' (' + comment.value + ')' : '';
-      lines.push('• ' + field.label + ': ' + val + com);
-    });
-    lines.push('');
-  });
-  return lines.join('\n');
-}
+
 
 function copyResult() {
   const niche = NICHES.find(n => n.id === currentNiche);
@@ -1233,27 +1219,7 @@ function copyResult() {
   navigator.clipboard.writeText(text).then(() => showToast('Скопировано ✓')).catch(() => {});
 }
 
-function resetForm() {
-  const niche = NICHES.find(n => n.id === currentNiche);
-  niche.sections.forEach(section => {
-    section.fields.forEach((field, fi) => {
-      const fid = msId(niche.id, section.num, fi);
-      if (field.multi) {
-        msState[fid] = new Set();
-        const trigger = document.getElementById(fid + '-trigger');
-        if (trigger) { trigger.textContent = '— выбрать —'; trigger.classList.remove('has-value'); }
-        const dd = document.getElementById(fid + '-dropdown');
-        if (dd) dd.querySelectorAll('.ms-option').forEach(o => o.classList.remove('selected'));
-      } else {
-        const sel = document.getElementById(fid);
-        if (sel) sel.value = '';
-      }
-      const comment = document.getElementById(fid + '-comment');
-      if (comment) comment.value = '';
-    });
-  });
-  document.getElementById('copyResult').style.display = 'none';
-}
+
 
 const SHEETS_CSV = 'https://docs.google.com/spreadsheets/d/1oGddn-b35WvMHN1BgcKEY1mslfR95-clrlzFXxPxDjc/export?format=csv';
 
@@ -1288,11 +1254,14 @@ const RULES = `
 - Нативка (Swift / Kotlin) — когда требуется максимальная производительность, работа с железом (Wearables, CV/ML на устройстве), или клиент категорически настаивает. Стоимость от 2,5 млн.
 
 ФОРМАТ ОТВЕТА:
-- Начни с эмодзи 💡 и заголовка "Рекомендации для менеджера"
-- Используй короткие пункты с эмодзи (🔴 🟡 🟢)
-- Если есть релевантные демо — перечисли их отдельным блоком 📱
-- Максимум 200 слов, только самое важное
+- Начни с жирного заголовка: *💡 Рекомендации для менеджера*
+- Каждый смысловой блок начинай с жирного подзаголовка, например: *🔴 Бюджет и стек:*, *🟡 Сроки:*, *🟢 Дизайн:*, *🔴 Интеграции:*
+- После жирного подзаголовка — короткий текст на 1–3 строки
+- Если есть релевантные демо — блок *✅ Демо есть:* с перечислением, затем *👉 Все демо:* https://disk.360.yandex.ru/d/4atYwEyStsGEWA
+- Если есть релевантные кейсы — блок *📂 Кейсы:* с названием и ссылкой
+- Максимум 250 слов, только самое важное
 - Пиши как коллега коллеге, без канцелярщины
+- Используй Markdown: *жирный* для заголовков и подзаголовков
 `;
 
 async function fetchDemos() {
@@ -1314,29 +1283,10 @@ async function fetchDemos() {
 }
 
 async function getAIRecommendation(briefText) {
-  const demos = await fetchDemos();
-  const cases = `
-• Клиент (конфиденциально) | финтех | Android | автоматизация процессов | https://nordclan.com/projects/onlajn-kassa-dlya-magazinov-kafe-salonov-i-vremennyh-tochek-prodazh
-• Новосибирскэнергосбыт | жкх | iOS, Android | клиентский сервис | https://nordclan.com/projects/servis-opovescheniy-communalnye-uslugi
-• Клиент (конфиденциально) | фудтех | Android | автоматизация процессов
-• Автосуши Франчайзинг и к | фудтех | Flutter/KMP, Android | продажи | https://nordclan.com/projects/redizajn-i-frontend-mobilnogo-prilozheniya-dostavka-edy
-• ApiBank (МАГ Девелопмент) | финтех/HR | Flutter/KMP, iOS, Android | HR-маркетплейс поиска работы | https://nordclan.com/projects/hr-marketplejs-dlya-poiska-raboty-i-uslug
-• Uzum | фудтех/IT | iOS, Android | приложение для курьеров | https://nordclan.com/projects/mobilnoe-prilozhenie-dlya-kurerov-dostavka-edy
-• Клиент (конфиденциально) | ритейл | Android | контроль качества
-• ФЦБ | финтех | Flutter | клиентский сервис / банкротство | https://nordclan.com/projects/fcb-prilozhenie-dlya-bankrotstva
-• Клиент (конфиденциально) | транспорт и логистика | iOS, Android | мониторинг процессов
-• Байбол | финтех | Android | МКК клиентский сервис | https://nordclan.com/projects/mobile-mkk
-• Джаст Лук (Jump Taxi) | транспорт и логистика | Android | автоматизация такси | https://nordclan.com/projects/jumptaxi
-• Клиент (конфиденциально) | медицина | Android | клиентский сервис (лаборатория) | https://nordclan.com/projects/medtech-invitro
-• Медси | медицина | iOS, Android | телемедицина/клиентский сервис | https://nordclan.com/projects/medsi-smartmed
-• Nord Clan | IT | iOS, Android | внутреннее приложение бронирования | https://nordclan.com/projects/mobile-booking
-• Самолет Плюс | девелопмент | iOS, Android | автоматизация агентства недвижимости | https://nordclan.com/projects/mobile-samolet
-`.trim();
-
   const res = await fetch('https://195.133.94.136:8443/recommend', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ brief: briefText, demos, cases })
+    body: JSON.stringify({ brief: briefText })
   });
   if (!res.ok) throw new Error('Сервер рекомендаций недоступен');
   const data = await res.json();
